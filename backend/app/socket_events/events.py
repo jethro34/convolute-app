@@ -92,3 +92,12 @@ def notify_student_removed(keyword, student_name, reason="removed by instructor"
         "message": f"You have been {reason}",
         "reason": reason
     }, room=student_room)
+
+def notify_session_ended(keyword):
+    """Notify all students that the session has ended"""
+    # Notify all students in the main session room
+    socketio.emit("session_ended", {
+        "message": "Session has been ended by the instructor",
+        "keyword": keyword
+    }, room=keyword)
+    print(f"[DEBUG] Session ended notification sent to room: {keyword}")

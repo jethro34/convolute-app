@@ -42,13 +42,24 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
       setupWebSocket();
     }
     return () => {
-      if (socket && socket.cleanup) {
-        socket.cleanup();
+      if (socket) {
+        if (socket.cleanup) {
+          socket.cleanup();
+        }
+        setSocket(null);
       }
     };
   }, [keyword]);
 
   const setupWebSocket = () => {
+    // Clean up existing socket first
+    if (socket) {
+      if (socket.cleanup) {
+        socket.cleanup();
+      }
+      setSocket(null);
+    }
+
     // Socket.IO connects to base URL, not /api endpoint
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
     const socketUrl = apiUrl.replace('/api', '');
@@ -194,6 +205,29 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const handleEndSession = async () => {
+    if (!keyword) return;
+    
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/session/${keyword}/end`, {
+        method: 'POST',
+      });
+      
+      if (res.ok) {
+        // Clear localStorage and logout
+        localStorage.removeItem('session_keyword');
+        if (onLogout) {
+          onLogout();
+        }
+      } else {
+        const data = await res.json();
+        setErrorMessage(data.message || 'Error ending session');
+      }
+    } catch (error) {
+      setErrorMessage('Network error. Please try again.');
+    }
+  };
+
   const handleLogout = () => {
     if (onLogout) {
       onLogout();
@@ -227,6 +261,9 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
             {userEmail ? userEmail[0].toUpperCase() : 'U'}
           </div>
           <span className={styles.userName}>{userEmail || 'User'}</span>
+          <button className={styles.endSessionBtn} onClick={handleEndSession}>
+            End Session
+          </button>
           <button className={styles.logoutBtn} onClick={handleLogout}>
             Logout
           </button>

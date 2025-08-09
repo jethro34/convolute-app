@@ -18,6 +18,13 @@ export default function App() {
     setToken(authToken);
     setUserEmail(email);
     
+    // Check for existing session in localStorage first
+    const savedKeyword = localStorage.getItem('session_keyword');
+    if (savedKeyword) {
+      setKeyword(savedKeyword);
+      return;
+    }
+    
     // Auto-create session after login
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/session/create`, {
@@ -26,13 +33,19 @@ export default function App() {
       });
       const data = await res.json();
       setKeyword(data.keyword);
+      // Save to localStorage for recovery
+      localStorage.setItem('session_keyword', data.keyword);
     } catch (error) {
       // For guest mode or if session creation fails, generate a simple keyword
-      setKeyword('DEMO' + Math.random().toString(36).substring(2, 6).toUpperCase());
+      const demoKeyword = 'DEMO' + Math.random().toString(36).substring(2, 6).toUpperCase();
+      setKeyword(demoKeyword);
+      localStorage.setItem('session_keyword', demoKeyword);
     }
   };
 
   const handleLogout = () => {
+    // Clear localStorage when logging out
+    localStorage.removeItem('session_keyword');
     setToken(null);
     setUserEmail(null);
     setKeyword(null);

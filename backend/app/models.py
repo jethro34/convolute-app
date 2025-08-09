@@ -13,6 +13,9 @@ class Session(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     keyword = db.Column(db.String(10), unique=True)
     instructor_id = db.Column(db.Integer, db.ForeignKey("instructor.id"))
+    start_time = db.Column(db.DateTime, default=db.func.current_timestamp())
+    end_time = db.Column(db.DateTime, nullable=True)
+    student_count = db.Column(db.Integer, default=0)
 
 
 class Keyword(db.Model):

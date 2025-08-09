@@ -34,16 +34,27 @@ export default function Room({ keyword, username, onLeave }) {
       }
     };
 
+    const handleSessionEnded = (data) => {
+      console.log('[DEBUG] Session ended by instructor:', data);
+      alert('Session has been ended by the instructor');
+      if (onLeave) {
+        // Don't call API since session is already ended
+        onLeave(false); // Pass false to skip API call
+      }
+    };
+
     socket.on('connect', handleConnect);
     socket.on('disconnect', handleDisconnect);
     socket.on('prompt', handlePrompt);
     socket.on('student_removed', handleStudentRemoved);
+    socket.on('session_ended', handleSessionEnded);
 
     return () => {
       socket.off('connect', handleConnect);
       socket.off('disconnect', handleDisconnect);
       socket.off('prompt', handlePrompt);
       socket.off('student_removed', handleStudentRemoved);
+      socket.off('session_ended', handleSessionEnded);
       socket.disconnect();
     };
   }, [keyword, username]);

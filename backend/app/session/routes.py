@@ -12,14 +12,20 @@ from . import session_bp
 
 @session_bp.route('/create', methods=['POST'])
 def create_session():
-    # Try to get user ID, fall back to None for guest sessions
-    current_user_id = None
+    # Try to get user ID, fall back to guest instructor (ID 0) for guest sessions
+    current_user_id = 0  # Default to guest instructor
     try:
         verify_jwt_in_request()
         current_user_id = get_jwt_identity()
     except:
-        # Guest session - no authentication required
-        pass
+        # Guest session - use guest instructor ID
+        current_user_id = 0
+        # Ensure guest instructor exists
+        guest_instructor = Instructor.query.filter_by(id=0).first()
+        if not guest_instructor:
+            guest_instructor = Instructor(id=0, email='guest@system', password='')
+            db.session.add(guest_instructor)
+            db.session.commit()
 
     # Get next keyword from circular buffer
     keyword = KeywordService.get_next_keyword()
@@ -134,6 +140,10 @@ def add_student(keyword):
     # Add the student
     student = Student(name=student_name, session_id=session.id)
     db.session.add(student)
+    
+    # Increment student count
+    session.student_count += 1
+    
     db.session.commit()
     
     # Notify instructors via WebSocket
@@ -227,3 +237,32 @@ def student_leave_session(keyword, student_name):
     notify_student_left(keyword, student_data)
     
     return jsonify({'message': 'Successfully left session'}), 200
+
+
+@session_bp.route('/<keyword>/end', methods=['POST'])
+def end_session(keyword):
+    """End a session"""
+    session = Session.query.filter_by(keyword=keyword).first()
+    if not session:
+        return jsonify({'message': 'Session not found'}), 404
+    
+    # Set end time
+    session.end_time = db.func.current_timestamp()
+    
+    # Get all students before cleanup
+    students = Student.query.filter_by(session_id=session.id).all()
+    
+    # Remove all students from session
+    for student in students:
+        db.session.delete(student)
+    
+    db.session.commit()
+    
+    # Notify all students that session ended
+    from ..socket_events.events import notify_session_ended
+    notify_session_ended(keyword)
+    
+    return jsonify({
+        'message': 'Session ended successfully',
+        'students_removed': len(students)
+    }), 200
