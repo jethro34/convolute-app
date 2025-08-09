@@ -6,6 +6,7 @@ from jwt.exceptions import DecodeError
 from ..models import Session, Instructor, Student
 from ..extensions import db
 from ..services.keyword_service import KeywordService
+from ..services.pairing_service import PairingService
 from ..socket_events.events import notify_student_joined, notify_student_left, notify_student_removed
 from . import session_bp
 
@@ -266,3 +267,46 @@ def end_session(keyword):
         'message': 'Session ended successfully',
         'students_removed': len(students)
     }), 200
+
+
+@session_bp.route('/<keyword>/pairings', methods=['POST'])
+def create_pairings(keyword):
+    """Create pairings for the next round"""
+    try:
+        result = PairingService.create_pairings(keyword)
+        return jsonify(result), 201
+    except ValueError as e:
+        return jsonify({'message': str(e)}), 404
+    except Exception as e:
+        return jsonify({'message': 'Error creating pairings'}), 500
+
+
+@session_bp.route('/<keyword>/pairings', methods=['GET'])
+def get_pairings(keyword):
+    """Get all pairings for a session"""
+    try:
+        pairings = PairingService.get_session_pairings(keyword)
+        return jsonify({'pairings': pairings}), 200
+    except Exception as e:
+        return jsonify({'message': 'Error fetching pairings'}), 500
+
+
+@session_bp.route('/<keyword>/instructor/participating', methods=['PUT'])
+def update_instructor_participation(keyword):
+    """Update instructor participation setting"""
+    data = request.get_json()
+    if 'participating' not in data:
+        return jsonify({'message': 'participating field required'}), 400
+    
+    session = Session.query.filter_by(keyword=keyword).first()
+    if not session:
+        return jsonify({'message': 'Session not found'}), 404
+    
+    instructor = Instructor.query.get(session.instructor_id)
+    if not instructor:
+        return jsonify({'message': 'Instructor not found'}), 404
+    
+    instructor.participating = data['participating']
+    db.session.commit()
+    
+    return jsonify({'message': 'Participation setting updated'}), 200

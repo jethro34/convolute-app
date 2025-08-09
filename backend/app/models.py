@@ -7,6 +7,7 @@ class Instructor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(120))
+    participating = db.Column(db.Boolean, default=False)
 
 
 class Session(db.Model):
@@ -33,3 +34,11 @@ class Student(db.Model):
     name = db.Column(db.String(100), nullable=False)
     session_id = db.Column(db.Integer, db.ForeignKey("session.id"))
     joined_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    round_count = db.Column(db.Integer, default=0)
+
+
+class Pairing(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    session_id = db.Column(db.Integer, db.ForeignKey("session.id"))
+    round_number = db.Column(db.Integer, nullable=False)
+    pairs = db.Column(db.Text, nullable=False)  # JSON string: [[student_id1, student_id2], [student_id3, student_id4]]

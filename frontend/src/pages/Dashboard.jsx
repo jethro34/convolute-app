@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { flushSync } from 'react-dom';
 import { io } from 'socket.io-client';
 import styles from './Dashboard.module.css';
 
@@ -12,6 +13,8 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
   const [selectedPromptFilter, setSelectedPromptFilter] = useState('general');
   const [sessionStatus, setSessionStatus] = useState('inactive');
   const [timeRemaining, setTimeRemaining] = useState(300);
+  const [instructorParticipating, setInstructorParticipating] = useState(false);
+  const processedStudents = useRef(new Set());
   const [pairings, setPairings] = useState([
     {
       round: 1,
@@ -37,33 +40,23 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
   }, []);
 
   useEffect(() => {
-    if (keyword) {
+    if (keyword && !socket) {
       fetchStudents();
       setupWebSocket();
     }
     return () => {
-      if (socket) {
-        if (socket.cleanup) {
-          socket.cleanup();
-        }
-        setSocket(null);
-      }
-    };
-  }, [keyword]);
-
-  const setupWebSocket = () => {
-    // Clean up existing socket first
-    if (socket) {
-      if (socket.cleanup) {
+      if (socket && socket.cleanup) {
         socket.cleanup();
       }
-      setSocket(null);
-    }
+    };
+  }, [keyword, socket]);
 
+  const setupWebSocket = () => {
     // Socket.IO connects to base URL, not /api endpoint
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
     const socketUrl = apiUrl.replace('/api', '');
     
+    console.log('[DEBUG] setupWebSocket called');
     console.log('[DEBUG] API URL:', apiUrl);
     console.log('[DEBUG] Socket URL:', socketUrl);
     
@@ -90,17 +83,28 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
     };
 
     const handleStudentJoined = (data) => {
+      const studentKey = `${data.student.id}_${data.student.joined_at}`;
+      
+      if (processedStudents.current.has(studentKey)) {
+        console.log('[DEBUG] Student event already processed, skipping:', studentKey);
+        return;
+      }
+      
+      processedStudents.current.add(studentKey);
       console.log('[DEBUG] Received student_joined event:', data);
-      // Add the new student to the list
-      setStudents(prev => {
-        // Check if student already exists (prevent duplicates)
-        const exists = prev.find(s => s.id === data.student.id);
-        if (exists) {
-          console.log('[DEBUG] Student already exists in list, skipping');
-          return prev;
-        }
-        console.log('[DEBUG] Adding new student to list:', data.student);
-        return [...prev, data.student];
+      
+      // Add the new student to the list with flushSync to prevent double execution
+      flushSync(() => {
+        setStudents(prev => {
+          // Check if student already exists (prevent duplicates)
+          const exists = prev.find(s => s.id === data.student.id);
+          if (exists) {
+            console.log('[DEBUG] Student already exists in list, skipping');
+            return prev;
+          }
+          console.log('[DEBUG] Adding new student to list:', data.student);
+          return [...prev, data.student];
+        });
       });
     };
 
@@ -137,9 +141,11 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
 
   const fetchStudents = async () => {
     try {
+      console.log('[DEBUG] fetchStudents called');
       const res = await fetch(`${import.meta.env.VITE_API_URL}/session/${keyword}/students`);
       const data = await res.json();
       if (res.ok) {
+        console.log('[DEBUG] fetched students:', data.students.map(s => s.name));
         setStudents(data.students);
       }
     } catch (error) {
@@ -166,11 +172,7 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
       const data = await res.json();
 
       if (res.ok) {
-        setStudents(prev => [...prev, {
-          id: data.id,
-          name: data.name,
-          joined_at: data.joined_at
-        }]);
+        // Don't manually update state - let WebSocket event handle it
         setNewStudentName('');
       } else {
         setErrorMessage(data.message || 'Error adding student');
@@ -242,12 +244,58 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
     { value: 'academic', label: 'Academic Focus' }
   ];
 
-  const handleStatusChange = () => {
-    const statuses = ['inactive', 'pairing', 'talking'];
-    const currentIndex = statuses.indexOf(sessionStatus);
-    const nextIndex = (currentIndex + 1) % statuses.length;
-    setSessionStatus(statuses[nextIndex]);
-    setTimeRemaining(300);
+  const handleStatusChange = async () => {
+    if (sessionStatus === 'inactive') {
+      // Create pairings when starting
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/session/${keyword}/pairings`, {
+          method: 'POST',
+        });
+        
+        if (res.ok) {
+          const pairingData = await res.json();
+          console.log('[DEBUG] Created pairings:', pairingData);
+          // Update session status to pairing
+          setSessionStatus('pairing');
+          setTimeRemaining(300);
+        } else {
+          const data = await res.json();
+          setErrorMessage(data.message || 'Error creating pairings');
+        }
+      } catch (error) {
+        setErrorMessage('Network error creating pairings');
+      }
+    } else {
+      // Cycle through other statuses
+      const statuses = ['inactive', 'pairing', 'talking'];
+      const currentIndex = statuses.indexOf(sessionStatus);
+      const nextIndex = (currentIndex + 1) % statuses.length;
+      setSessionStatus(statuses[nextIndex]);
+      setTimeRemaining(300);
+    }
+  };
+
+  const handleParticipationToggle = async () => {
+    const newValue = !instructorParticipating;
+    
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/session/${keyword}/instructor/participating`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ participating: newValue }),
+      });
+      
+      if (res.ok) {
+        setInstructorParticipating(newValue);
+      } else {
+        const data = await res.json();
+        setErrorMessage(data.message || 'Error updating participation');
+      }
+    } catch (error) {
+      setErrorMessage('Network error updating participation');
+    }
   };
 
   return (
@@ -385,6 +433,22 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
           <div className={styles.timerDisplay}>
             <div className={styles.timerTime}>{formatTime(timeRemaining)}</div>
             <div className={styles.timerLabel}>Time Remaining</div>
+          </div>
+
+          <div className={styles.participationToggle}>
+            <label className={styles.toggleLabel}>
+              <input
+                type="checkbox"
+                checked={instructorParticipating}
+                onChange={handleParticipationToggle}
+                disabled={students.length % 2 === 0}
+                className={styles.toggleInput}
+              />
+              <span className={styles.toggleSlider}></span>
+              <span className={styles.toggleText}>
+                Instructor Participating {students.length % 2 === 0 && '(even students)'}
+              </span>
+            </label>
           </div>
 
           <button className={styles.cardButton} onClick={handleStatusChange}>

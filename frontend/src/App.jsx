@@ -73,7 +73,7 @@ export default function App() {
       userEmail: email,
       role: 'instructor',
       // expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
-      expiresAt: Date.now() + (60 * 1000) // 1 min
+      expiresAt: Date.now() + (5 * 60 * 1000) // 1 min
     };
     localStorage.setItem('auth_data', JSON.stringify(authData));
     
