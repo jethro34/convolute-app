@@ -10,21 +10,21 @@ export default function Room({ keyword, username, onLeave }) {
   useEffect(() => {
     socket.connect();
 
-    socket.on('connect', () => {
+    const handleConnect = () => {
       setIsConnected(true);
       socket.emit("join_session", { keyword, username });
-    });
+    };
 
-    socket.on('disconnect', () => {
+    const handleDisconnect = () => {
       setIsConnected(false);
-    });
+    };
 
-    socket.on("prompt", ({ role, prompt }) => {
+    const handlePrompt = ({ role, prompt }) => {
       setRole(role);
       setPrompt(prompt);
-    });
+    };
 
-    socket.on("student_removed", (data) => {
+    const handleStudentRemoved = (data) => {
       console.log('[DEBUG] Student removed by instructor:', data);
       alert(`You have been ${data.reason}`);
       if (onLeave) {
@@ -32,9 +32,18 @@ export default function Room({ keyword, username, onLeave }) {
         // Just clear the frontend state to return to Join page
         onLeave(false); // Pass false to skip API call
       }
-    });
+    };
+
+    socket.on('connect', handleConnect);
+    socket.on('disconnect', handleDisconnect);
+    socket.on('prompt', handlePrompt);
+    socket.on('student_removed', handleStudentRemoved);
 
     return () => {
+      socket.off('connect', handleConnect);
+      socket.off('disconnect', handleDisconnect);
+      socket.off('prompt', handlePrompt);
+      socket.off('student_removed', handleStudentRemoved);
       socket.disconnect();
     };
   }, [keyword, username]);

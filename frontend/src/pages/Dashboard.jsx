@@ -42,8 +42,8 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
       setupWebSocket();
     }
     return () => {
-      if (socket) {
-        socket.disconnect();
+      if (socket && socket.cleanup) {
+        socket.cleanup();
       }
     };
   }, [keyword]);
@@ -60,25 +60,25 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
       autoConnect: true,
       transports: ['polling', 'websocket']
     });
-    
-    newSocket.on('connect', () => {
+
+    const handleConnect = () => {
       console.log('[DEBUG] WebSocket connected to server');
       setIsConnected(true);
       // Join the instructor room for this session
       console.log('[DEBUG] Emitting join_instructor_room with keyword:', keyword);
       newSocket.emit('join_instructor_room', { keyword });
-    });
+    };
 
-    newSocket.on('disconnect', () => {
+    const handleDisconnect = () => {
       console.log('[DEBUG] WebSocket disconnected from server');
       setIsConnected(false);
-    });
+    };
 
-    newSocket.on('instructor_joined', (data) => {
+    const handleInstructorJoined = (data) => {
       console.log('[DEBUG] Instructor joined room:', data.message);
-    });
+    };
 
-    newSocket.on('student_joined', (data) => {
+    const handleStudentJoined = (data) => {
       console.log('[DEBUG] Received student_joined event:', data);
       // Add the new student to the list
       setStudents(prev => {
@@ -91,17 +91,35 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
         console.log('[DEBUG] Adding new student to list:', data.student);
         return [...prev, data.student];
       });
-    });
+    };
 
-    newSocket.on('student_left', (data) => {
+    const handleStudentLeft = (data) => {
       console.log('[DEBUG] Received student_left event:', data);
       // Remove the student from the list
       setStudents(prev => prev.filter(s => s.id !== data.student.id));
-    });
+    };
 
-    newSocket.on('connect_error', (error) => {
+    const handleConnectError = (error) => {
       console.error('[DEBUG] WebSocket connection error:', error);
-    });
+    };
+    
+    newSocket.on('connect', handleConnect);
+    newSocket.on('disconnect', handleDisconnect);
+    newSocket.on('instructor_joined', handleInstructorJoined);
+    newSocket.on('student_joined', handleStudentJoined);
+    newSocket.on('student_left', handleStudentLeft);
+    newSocket.on('connect_error', handleConnectError);
+
+    // Store cleanup function
+    newSocket.cleanup = () => {
+      newSocket.off('connect', handleConnect);
+      newSocket.off('disconnect', handleDisconnect);
+      newSocket.off('instructor_joined', handleInstructorJoined);
+      newSocket.off('student_joined', handleStudentJoined);
+      newSocket.off('student_left', handleStudentLeft);
+      newSocket.off('connect_error', handleConnectError);
+      newSocket.disconnect();
+    };
 
     setSocket(newSocket);
   };
