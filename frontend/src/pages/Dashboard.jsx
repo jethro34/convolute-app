@@ -214,8 +214,9 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
       });
       
       if (res.ok) {
-        // Clear localStorage and logout
+        // Clear all localStorage and logout
         localStorage.removeItem('session_keyword');
+        localStorage.removeItem('auth_data');
         if (onLogout) {
           onLogout();
         }

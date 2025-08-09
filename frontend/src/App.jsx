@@ -13,10 +13,68 @@ export default function App() {
   const [userEmail, setUserEmail] = useState(null);
   const [keyword, setKeyword] = useState(null);
   const [username, setUsername] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Restore auth state from localStorage on app load
+  useState(() => {
+    const initializeApp = async () => {
+      const savedAuth = localStorage.getItem('auth_data');
+      if (savedAuth) {
+        try {
+          const authData = JSON.parse(savedAuth);
+          // Check if auth data hasn't expired
+          if (authData.expiresAt && Date.now() < authData.expiresAt) {
+            setToken(authData.token);
+            setUserEmail(authData.userEmail);
+            setRole(authData.role);
+            // Also restore session keyword
+            const savedKeyword = localStorage.getItem('session_keyword');
+            if (savedKeyword) {
+              setKeyword(savedKeyword);
+            }
+          } else {
+            // Auth data expired, need to clean up session
+            const savedKeyword = localStorage.getItem('session_keyword');
+            if (savedKeyword) {
+              try {
+                // End the session in the database
+                await fetch(`${import.meta.env.VITE_API_URL}/session/${savedKeyword}/end`, {
+                  method: 'POST',
+                });
+                console.log('[DEBUG] Session ended due to auth expiration');
+              } catch (error) {
+                console.error('Error ending expired session:', error);
+              }
+            }
+            // Clear localStorage
+            localStorage.removeItem('auth_data');
+            localStorage.removeItem('session_keyword');
+          }
+        } catch (error) {
+          console.error('Error parsing stored auth data:', error);
+          localStorage.removeItem('auth_data');
+          localStorage.removeItem('session_keyword');
+        }
+      }
+      setIsInitialized(true);
+    };
+    
+    initializeApp();
+  });
 
   const handleInstructorLogin = async (authToken, email) => {
     setToken(authToken);
     setUserEmail(email);
+    setRole('instructor');
+    
+    // Store auth data in localStorage with 24 hour expiration
+    const authData = {
+      token: authToken,
+      userEmail: email,
+      role: 'instructor',
+      expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+    };
+    localStorage.setItem('auth_data', JSON.stringify(authData));
     
     // Check for existing session in localStorage first
     const savedKeyword = localStorage.getItem('session_keyword');
@@ -44,13 +102,19 @@ export default function App() {
   };
 
   const handleLogout = () => {
-    // Clear localStorage when logging out
+    // Clear all localStorage when logging out
     localStorage.removeItem('session_keyword');
+    localStorage.removeItem('auth_data');
     setToken(null);
     setUserEmail(null);
     setKeyword(null);
     setRole(null);
   };
+
+  // Show loading while initializing to prevent flash
+  if (!isInitialized) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Loading...</div>;
+  }
 
   if (!role) return <Landing onSelect={setRole} />;
 
