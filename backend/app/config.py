@@ -1,4 +1,4 @@
-# monolith_app/app/config.py
+# convolute/backend/app/config.py
 
 class Config:
     SECRET_KEY = "super-secret"
