@@ -72,8 +72,7 @@ export default function App() {
       token: authToken,
       userEmail: email,
       role: 'instructor',
-      // expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
-      expiresAt: Date.now() + (5 * 60 * 1000) // 1 min
+      expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
     };
     localStorage.setItem('auth_data', JSON.stringify(authData));
     
@@ -122,9 +121,7 @@ export default function App() {
   if (role === 'instructor') {
     if (!token) return <Login onLogin={handleInstructorLogin} />;
     return <Dashboard 
-      token={token} 
-      keyword={keyword} 
-      setKeyword={setKeyword}
+      keyword={keyword}
       onLogout={handleLogout}
       userEmail={userEmail}
     />;

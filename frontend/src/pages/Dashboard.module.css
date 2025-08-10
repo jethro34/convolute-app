@@ -1,55 +1,64 @@
 .container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  padding: 3rem 4rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  background: #0f172a;
+  display: flex;
+  color: #e2e8f0;
+  padding: 0;
+  margin: 0;
+  max-width: none;
+}
+
+.sidebar {
+  width: 350px;
+  background: #1e293b;
+  padding: 2rem;
+  border-right: 1px solid #334155;
+  overflow-y: auto;
 }
 
 .header {
-  background: white;
-  padding: 2rem 2.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  margin-bottom: 3rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  background: #334155;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: 1.75rem;
   font-weight: bold;
-  color: #1f2937;
+  color: #f1f5f9;
+  margin: 0;
 }
 
 .subtitle {
-  color: #6b7280;
-  margin-top: 0.5rem;
-  font-size: 1.1rem;
+  color: #94a3b8;
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
 }
 
 .userInfo {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 .avatar {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: bold;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .userName {
-  color: #374151;
+  color: #e2e8f0;
   font-weight: 500;
   font-size: 1.1rem;
 }
@@ -147,7 +156,48 @@
 
 .toggleText {
   font-size: 0.9rem;
-  color: #374151;
+  color: #e2e8f0;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.topCards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.bottomSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.card {
+  background: #334155;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  border: 1px solid #475569;
+}
+
+.cardTitle {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #f1f5f9;
+  margin-bottom: 0.5rem;
+}
+
+.cardDescription {
+  color: #94a3b8;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  font-size: 0.875rem;
 }
 
 .content {
@@ -155,34 +205,6 @@
   grid-template-columns: 1fr 1fr;
   gap: 3rem;
   margin-bottom: 3rem;
-}
-
-.card {
-  background: white;
-  padding: 2.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
-  height: fit-content;
-}
-
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-.cardTitle {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #1f2937;
-  margin-bottom: 0.75rem;
-}
-
-.cardDescription {
-  color: #6b7280;
-  margin-bottom: 2rem;
-  line-height: 1.6;
-  font-size: 1rem;
 }
 
 .cardButton {
@@ -203,10 +225,8 @@
 }
 
 .sessionInfo {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 3rem;
-  margin-bottom: 3rem;
+  display: block;
+  margin-bottom: 1.5rem;
 }
 
 .studentsList {
@@ -220,10 +240,10 @@
 }
 
 .studentsTitle {
-  font-size: 1.5rem;
+  font-size: 1.125rem;
   font-weight: bold;
-  color: #1f2937;
-  margin-bottom: 1.5rem;
+  color: #f1f5f9;
+  margin-bottom: 1rem;
 }
 
 .studentItem {
@@ -252,23 +272,24 @@
 }
 
 .studentName {
-  color: #374151;
+  color: #e2e8f0;
   font-weight: 500;
   font-size: 1.1rem;
 }
 
 .sessionControls {
-  background: white;
+  background: #334155;
   padding: 2.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  border: 1px solid #475569;
   height: fit-content;
 }
 
 .controlsTitle {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #1f2937;
+  color: #f1f5f9;
   margin-bottom: 1.5rem;
 }
 
@@ -279,7 +300,7 @@
 .filterLabel {
   font-size: 1rem;
   font-weight: 500;
-  color: #374151;
+  color: #e2e8f0;
   margin-bottom: 0.75rem;
   display: block;
 }
@@ -287,10 +308,11 @@
 .filterSelect {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid #475569;
   border-radius: 0.5rem;
   font-size: 1rem;
-  background: white;
+  background: #1e293b;
+  color: #e2e8f0;
 }
 
 .statusBadge {
@@ -304,59 +326,61 @@
 }
 
 .statusInactive {
-  background: #fef3c7;
-  color: #92400e;
+  background: #451a03;
+  color: #fbbf24;
 }
 
 .statusPairing {
-  background: #dbeafe;
-  color: #1e40af;
+  background: #1e3a8a;
+  color: #93c5fd;
 }
 
 .statusTalking {
-  background: #d1fae5;
-  color: #065f46;
+  background: #064e3b;
+  color: #6ee7b7;
 }
 
 .timerDisplay {
-  background: #f3f4f6;
+  background: #1e293b;
   padding: 1.5rem;
   border-radius: 0.5rem;
   text-align: center;
   margin-bottom: 1.5rem;
+  border: 1px solid #475569;
 }
 
 .timerTime {
   font-size: 2rem;
   font-weight: bold;
-  color: #1f2937;
+  color: #f1f5f9;
 }
 
 .timerLabel {
   font-size: 1rem;
-  color: #6b7280;
+  color: #94a3b8;
   margin-top: 0.5rem;
 }
 
 .pairingsSection {
-  background: white;
+  background: #334155;
   padding: 3rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  border: 1px solid #475569;
   margin-bottom: 3rem;
 }
 
 .pairingsTitle {
   font-size: 1.75rem;
   font-weight: bold;
-  color: #1f2937;
+  color: #f1f5f9;
   margin-bottom: 2rem;
 }
 
 .roundTitle {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #374151;
+  color: #f1f5f9;
   margin-bottom: 1rem;
   margin-top: 2rem;
 }
@@ -372,43 +396,43 @@
 }
 
 .pairingItem {
-  background: #f8fafc;
+  background: #1e293b;
   padding: 1.5rem;
   border-radius: 0.5rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #475569;
 }
 
 .pairingStudents {
   font-weight: 500;
-  color: #374151;
+  color: #f1f5f9;
   margin-bottom: 0.75rem;
   font-size: 1.1rem;
 }
 
 .pairingPrompt {
   font-size: 1rem;
-  color: #6b7280;
+  color: #94a3b8;
   line-height: 1.5;
 }
 
 .emptyState {
   text-align: center;
-  color: #6b7280;
+  color: #94a3b8;
   font-style: italic;
   padding: 3rem;
   font-size: 1.1rem;
 }
 
 .keywordLabel {
-  color: #059669;
+  color: #34d399;
   font-weight: 500;
   margin-bottom: 1rem;
 }
 
 .keywordDisplay {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
   color: white;
-  padding: 1rem;
+  padding: 0.75rem;
   border-radius: 0.5rem;
   text-align: center;
   font-size: 1.5rem;
@@ -443,7 +467,7 @@
 
 .analyticsLabel {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: #94a3b8;
 }
 
 .addStudentForm {
@@ -456,9 +480,11 @@
 .addStudentInput {
   flex: 1;
   padding: 0.5rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid #475569;
   border-radius: 0.375rem;
   font-size: 0.875rem;
+  background: #1e293b;
+  color: #e2e8f0;
 }
 
 .addStudentInput:focus {
@@ -509,7 +535,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 0;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid #475569;
 }
 
 .studentItemWithActions:last-child {
@@ -522,9 +548,13 @@
 }
 
 .errorMessage {
-  color: #dc2626;
+  color: #f87171;
   font-size: 0.875rem;
   margin-top: 0.5rem;
+  background: #431818;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid #7f1d1d;
 }
 
 .connectionStatus {
@@ -532,7 +562,7 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.75rem;
-  color: #6b7280;
+  color: #94a3b8;
 }
 
 .connectionDot {

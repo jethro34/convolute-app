@@ -3,7 +3,7 @@ import { flushSync } from 'react-dom';
 import { io } from 'socket.io-client';
 import styles from './Dashboard.module.css';
 
-export default function Dashboard({ token, keyword, setKeyword, onLogout, userEmail }) {
+export default function Dashboard({ keyword, onLogout, userEmail }) {
   const [students, setStudents] = useState([]);
   const [newStudentName, setNewStudentName] = useState('');
   const [addingStudent, setAddingStudent] = useState(false);
@@ -15,22 +15,7 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
   const [timeRemaining, setTimeRemaining] = useState(300);
   const [instructorParticipating, setInstructorParticipating] = useState(false);
   const processedStudents = useRef(new Set());
-  const [pairings, setPairings] = useState([
-    {
-      round: 1,
-      pairs: [
-        { students: ['Alice Johnson', 'Bob Smith'], prompt: 'Discuss your favorite programming language and why.' },
-        { students: ['Carol Davis', 'David Wilson'], prompt: 'Share your experience with teamwork in projects.' }
-      ]
-    },
-    {
-      round: 2,
-      pairs: [
-        { students: ['Alice Johnson', 'Carol Davis'], prompt: 'What motivates you in your studies?' },
-        { students: ['Bob Smith', 'David Wilson'], prompt: 'Describe a challenging problem you solved recently.' }
-      ]
-    }
-  ]);
+  const [pairings, setPairings] = useState([]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -42,6 +27,7 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
   useEffect(() => {
     if (keyword && !socket) {
       fetchStudents();
+      fetchPairings();
       setupWebSocket();
     }
     return () => {
@@ -153,6 +139,31 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
     }
   };
 
+  const fetchPairings = async () => {
+    try {
+      console.log('[DEBUG] fetchPairings called');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/session/${keyword}/pairings`);
+      const data = await res.json();
+      if (res.ok) {
+        console.log('[DEBUG] fetched pairings:', data.pairings);
+        const formattedPairings = data.pairings.map(pairing => ({
+          round: pairing.round_number,
+          pairs: pairing.pairs.map(pair => ({
+            students: pair.map(studentId => {
+              // Find student name by ID (or show instructor for ID matching instructor_id)
+              const student = students.find(s => s.id === studentId);
+              return student ? student.name : `Student ${studentId}`;
+            }),
+            prompt: 'Generated prompt will go here' // TODO: Add prompts later
+          }))
+        }));
+        setPairings(formattedPairings);
+      }
+    } catch (error) {
+      console.error('Error fetching pairings:', error);
+    }
+  };
+
   const handleAddStudent = async (e) => {
     e.preventDefault();
     if (!newStudentName.trim()) return;
@@ -255,6 +266,8 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
         if (res.ok) {
           const pairingData = await res.json();
           console.log('[DEBUG] Created pairings:', pairingData);
+          // Fetch updated pairings to display
+          await fetchPairings();
           // Update session status to pairing
           setSessionStatus('pairing');
           setTimeRemaining(300);
@@ -300,26 +313,26 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <div>
-          <h1 className={styles.title}>Instructor Dashboard</h1>
-          <p className={styles.subtitle}>Manage your teaching sessions</p>
-        </div>
-        <div className={styles.userInfo}>
-          <div className={styles.avatar}>
-            {userEmail ? userEmail[0].toUpperCase() : 'U'}
+      <div className={styles.sidebar}>
+        <div className={styles.header}>
+          <div>
+            <h1 className={styles.title}>Instructor Dashboard</h1>
+            <p className={styles.subtitle}>Manage your teaching sessions</p>
           </div>
-          <span className={styles.userName}>{userEmail || 'User'}</span>
-          <button className={styles.endSessionBtn} onClick={handleEndSession}>
-            End Session
-          </button>
-          <button className={styles.logoutBtn} onClick={handleLogout}>
-            Logout
-          </button>
+          <div className={styles.userInfo}>
+            <div className={styles.avatar}>
+              {userEmail ? userEmail[0].toUpperCase() : 'U'}
+            </div>
+            <span className={styles.userName}>{userEmail || 'User'}</span>
+            <button className={styles.endSessionBtn} onClick={handleEndSession}>
+              End Session
+            </button>
+            <button className={styles.logoutBtn} onClick={handleLogout}>
+              Logout
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div className={styles.content}>
         <div className={styles.card}>
           <h2 className={styles.cardTitle}>Active Session</h2>
           <p className={styles.cardDescription}>
@@ -351,12 +364,96 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
             </div>
           </div>
         </div>
-      </div>
 
-      <div className={styles.sessionInfo}>
-        <div className={styles.studentsList}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h3 className={styles.studentsTitle}>Students ({students.length})</h3>
+      </div>
+      
+      <div className={styles.mainContent}>
+        <div className={styles.topCards}>
+          <div className={styles.card}>
+            <h2 className={styles.cardTitle}>Session Controls</h2>
+            <p className={styles.cardDescription}>
+              Manage your session and create pairings
+            </p>
+            
+            <div className={styles.filterGroup}>
+              <label className={styles.filterLabel}>Prompt Filter</label>
+              <select 
+                className={styles.filterSelect}
+                value={selectedPromptFilter}
+                onChange={(e) => setSelectedPromptFilter(e.target.value)}
+              >
+                {promptFilters.map(filter => (
+                  <option key={filter.value} value={filter.value}>
+                    {filter.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className={`${styles.statusBadge} ${styles[`status${sessionStatus.charAt(0).toUpperCase() + sessionStatus.slice(1)}`]}`}>
+              Status: {sessionStatus.charAt(0).toUpperCase() + sessionStatus.slice(1)}
+            </div>
+
+            <div className={styles.timerDisplay}>
+              <div className={styles.timerTime}>{formatTime(timeRemaining)}</div>
+              <div className={styles.timerLabel}>Time Remaining</div>
+            </div>
+
+            <div className={styles.participationToggle}>
+              <label className={styles.toggleLabel}>
+                <input
+                  type="checkbox"
+                  checked={instructorParticipating}
+                  onChange={handleParticipationToggle}
+                  disabled={students.length % 2 === 0}
+                  className={styles.toggleInput}
+                />
+                <span className={styles.toggleSlider}></span>
+                <span className={styles.toggleText}>
+                  Instructor Participating {students.length % 2 === 0 && '(even students)'}
+                </span>
+              </label>
+            </div>
+
+            <button className={styles.cardButton} onClick={handleStatusChange}>
+              {sessionStatus === 'inactive' ? 'Start Pairing' : 
+               sessionStatus === 'pairing' ? 'Begin Discussion' : 'Next Round'}
+            </button>
+          </div>
+          
+          <div className={styles.card}>
+            <h2 className={styles.cardTitle}>Session Pairings</h2>
+            <p className={styles.cardDescription}>
+              Current and previous pairing rounds
+            </p>
+            {pairings.length > 0 ? (
+              pairings.map(round => (
+                <div key={round.round} className={styles.roundContainer}>
+                  <h4 className={styles.roundTitle}>Round {round.round}</h4>
+                  <div className={styles.pairingsList}>
+                    {round.pairs.map((pair, index) => (
+                      <div key={index} className={styles.pairingItem}>
+                        <div className={styles.pairingStudents}>
+                          {pair.students.join(' & ')}
+                        </div>
+                        <div className={styles.pairingPrompt}>
+                          {pair.prompt}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className={styles.emptyState}>No pairings created yet</div>
+            )}
+          </div>
+        </div>
+
+        <div className={styles.card}>
+          <h2 className={styles.cardTitle}>Students ({students.length})</h2>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <p className={styles.cardDescription}>Manage session participants</p>
             <div className={styles.connectionStatus}>
               <div className={`${styles.connectionDot} ${isConnected ? styles.connected : ''}`}></div>
               {isConnected ? 'Live' : 'Offline'}
@@ -407,80 +504,6 @@ export default function Dashboard({ token, keyword, setKeyword, onLogout, userEm
             <div className={styles.emptyState}>No students added yet</div>
           )}
         </div>
-
-        <div className={styles.sessionControls}>
-          <h3 className={styles.controlsTitle}>Session Controls</h3>
-          
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>Prompt Filter</label>
-            <select 
-              className={styles.filterSelect}
-              value={selectedPromptFilter}
-              onChange={(e) => setSelectedPromptFilter(e.target.value)}
-            >
-              {promptFilters.map(filter => (
-                <option key={filter.value} value={filter.value}>
-                  {filter.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className={`${styles.statusBadge} ${styles[`status${sessionStatus.charAt(0).toUpperCase() + sessionStatus.slice(1)}`]}`}>
-            Status: {sessionStatus.charAt(0).toUpperCase() + sessionStatus.slice(1)}
-          </div>
-
-          <div className={styles.timerDisplay}>
-            <div className={styles.timerTime}>{formatTime(timeRemaining)}</div>
-            <div className={styles.timerLabel}>Time Remaining</div>
-          </div>
-
-          <div className={styles.participationToggle}>
-            <label className={styles.toggleLabel}>
-              <input
-                type="checkbox"
-                checked={instructorParticipating}
-                onChange={handleParticipationToggle}
-                disabled={students.length % 2 === 0}
-                className={styles.toggleInput}
-              />
-              <span className={styles.toggleSlider}></span>
-              <span className={styles.toggleText}>
-                Instructor Participating {students.length % 2 === 0 && '(even students)'}
-              </span>
-            </label>
-          </div>
-
-          <button className={styles.cardButton} onClick={handleStatusChange}>
-            {sessionStatus === 'inactive' ? 'Start Pairing' : 
-             sessionStatus === 'pairing' ? 'Begin Discussion' : 'Next Round'}
-          </button>
-        </div>
-      </div>
-
-      <div className={styles.pairingsSection}>
-        <h3 className={styles.pairingsTitle}>Session Pairings</h3>
-        {pairings.length > 0 ? (
-          pairings.map(round => (
-            <div key={round.round}>
-              <h4 className={styles.roundTitle}>Round {round.round}</h4>
-              <div className={styles.pairingsList}>
-                {round.pairs.map((pair, index) => (
-                  <div key={index} className={styles.pairingItem}>
-                    <div className={styles.pairingStudents}>
-                      {pair.students.join(' & ')}
-                    </div>
-                    <div className={styles.pairingPrompt}>
-                      {pair.prompt}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className={styles.emptyState}>No pairings created yet</div>
-        )}
       </div>
     </div>
   );
