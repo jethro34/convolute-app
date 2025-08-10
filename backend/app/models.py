@@ -17,6 +17,7 @@ class Session(db.Model):
     start_time = db.Column(db.DateTime, default=db.func.current_timestamp())
     end_time = db.Column(db.DateTime, nullable=True)
     student_count = db.Column(db.Integer, default=0)
+    prev_pairing_ids = db.Column(db.Text, default='[]')  # JSON array for round-robin state
 
 
 class Keyword(db.Model):
@@ -35,6 +36,8 @@ class Student(db.Model):
     session_id = db.Column(db.Integer, db.ForeignKey("session.id"))
     joined_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     round_count = db.Column(db.Integer, default=0)
+    has_led = db.Column(db.Text, default='{}')  # JSON string: {partner_id: count}
+    join_order = db.Column(db.Integer, default=0)  # Track joining order
 
 
 class Pairing(db.Model):

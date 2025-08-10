@@ -138,8 +138,15 @@ def add_student(keyword):
     if existing_student:
         return jsonify({'message': 'Student already exists in this session'}), 409
     
+    # Get next join order (for round-robin sequencing)
+    max_order = db.session.query(db.func.max(Student.join_order)).filter_by(session_id=session.id).scalar() or 0
+    
     # Add the student
-    student = Student(name=student_name, session_id=session.id)
+    student = Student(
+        name=student_name, 
+        session_id=session.id,
+        join_order=max_order + 1
+    )
     db.session.add(student)
     
     # Increment student count
