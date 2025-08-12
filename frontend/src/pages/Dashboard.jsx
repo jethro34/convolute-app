@@ -148,14 +148,32 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
         console.log('[DEBUG] fetched pairings:', data.pairings);
         const formattedPairings = data.pairings.map(pairing => ({
           round: pairing.round_number,
-          pairs: pairing.pairs.map(pair => ({
-            students: pair.map(studentId => {
-              // Find student name by ID (or show instructor for ID matching instructor_id)
+          pairs: pairing.pairs.map(pair => {
+            const [leaderId, talkerId] = pair;
+            
+            // Handle dummy (0) in pairing
+            if (leaderId === 0 || talkerId === 0) {
+              const studentId = leaderId === 0 ? talkerId : leaderId;
               const student = students.find(s => s.id === studentId);
-              return student ? student.name : `Student ${studentId}`;
-            }),
-            prompt: 'Generated prompt will go here' // TODO: Add prompts later
-          }))
+              const studentName = student ? student.name : `Student ${studentId}`;
+              
+              return {
+                students: [studentName, instructorParticipating ? 'Instructor' : 'On Break'],
+                prompt: instructorParticipating ? 'Generated prompt will go here' : 'Taking a break this round'
+              };
+            }
+            
+            // Regular student-student pairing
+            const leader = students.find(s => s.id === leaderId);
+            const talker = students.find(s => s.id === talkerId);
+            const leaderName = leader ? leader.name : `Student ${leaderId}`;
+            const talkerName = talker ? talker.name : `Student ${talkerId}`;
+            
+            return {
+              students: [leaderName, talkerName],
+              prompt: 'Generated prompt will go here'
+            };
+          })
         }));
         setPairings(formattedPairings);
       }

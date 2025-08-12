@@ -138,14 +138,10 @@ def add_student(keyword):
     if existing_student:
         return jsonify({'message': 'Student already exists in this session'}), 409
     
-    # Get next join order (for round-robin sequencing)
-    max_order = db.session.query(db.func.max(Student.join_order)).filter_by(session_id=session.id).scalar() or 0
-    
     # Add the student
     student = Student(
         name=student_name, 
-        session_id=session.id,
-        join_order=max_order + 1
+        session_id=session.id
     )
     db.session.add(student)
     
@@ -157,15 +153,13 @@ def add_student(keyword):
     # Notify instructors via WebSocket
     student_data = {
         'id': student.id,
-        'name': student.name,
-        'joined_at': student.joined_at.isoformat()
+        'name': student.name
     }
     notify_student_joined(keyword, student_data)
     
     return jsonify({
         'id': student.id,
         'name': student.name,
-        'joined_at': student.joined_at.isoformat(),
         'message': 'Student added successfully'
     }), 201
 
@@ -183,8 +177,7 @@ def list_students(keyword):
     for student in students:
         student_list.append({
             'id': student.id,
-            'name': student.name,
-            'joined_at': student.joined_at.isoformat()
+            'name': student.name
         })
     
     return jsonify({'students': student_list}), 200
@@ -204,8 +197,7 @@ def remove_student(keyword, student_id):
     # Store student data before deletion for WebSocket notification
     student_data = {
         'id': student.id,
-        'name': student.name,
-        'joined_at': student.joined_at.isoformat()
+        'name': student.name
     }
     
     # Notify student they were removed (before deletion)
@@ -234,8 +226,7 @@ def student_leave_session(keyword, student_name):
     # Store student data before deletion for WebSocket notification
     student_data = {
         'id': student.id,
-        'name': student.name,
-        'joined_at': student.joined_at.isoformat()
+        'name': student.name
     }
     
     db.session.delete(student)

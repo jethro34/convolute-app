@@ -36,16 +36,15 @@ class PairingService:
         # Determine next round number
         next_round = 1 if not latest_pairing else latest_pairing.round_number + 1
 
-        # Get last rotation
-        last_rotation = latest_pairing.rotation
-
-        # If first-time or updated pairing_list
-        if not latest_pairing.pairing_list or (pairing_list != latest_pairing.pairing_list):
-            last_rotation = pairing_list    # set last_rotation to pairing_list
-
-        else:   # If pairing_list == self.pairing_list: if same pairing list, rotate only
-            Pairing.swap_first_pair = not Pairing.swap_first_pair
-            last_rotation = [last_rotation[0], last_rotation[-1]] + last_rotation[1:-1]     # rotate
+        # Determine rotation based on previous state
+        if not latest_pairing or json.loads(latest_pairing.pairing_list) != pairing_list:
+            # First round or student list changed - use current pairing_list
+            last_rotation = pairing_list
+        else:
+            # Same student list - rotate from previous
+            PairingService.swap_first_pair = not PairingService.swap_first_pair
+            prev_rotation = json.loads(latest_pairing.rotation)
+            last_rotation = [prev_rotation[0], prev_rotation[-1]] + prev_rotation[1:-1]
 
         # Generate pairings using modified circle method algorithm
         pairings = PairingService._pair(last_rotation)
@@ -64,8 +63,6 @@ class PairingService:
         for student in students:
             student.round_count += 1
 
-        # Save updated round-robin state
-        # session.prev_pairing_ids = json.dumps(pairings_result['next_state'])
         
         db.session.commit()
         
