@@ -43,3 +43,19 @@ class Pairing(db.Model):
     pairing_list = db.Column(db.Text, default='[]')    # JSON string: [student_id1, student_id2, ...]
     rotation = db.Column(db.Text, default='[]')    # JSON string: [student_id1, student_id2, ...]
     pairs = db.Column(db.Text, nullable=False)  # JSON string: [[student_id1, student_id2], [student_id3, student_id4]]
+
+
+class Prompt(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    prompt = db.Column(db.Text, nullable=False)
+
+
+class Tag(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    tag = db.Column(db.String(50), nullable=False, unique=True)
+
+
+class PromptTag(db.Model):
+    __tablename__ = 'prompt_tags'
+    prompt_id = db.Column(db.Integer, db.ForeignKey('prompt.id'), primary_key=True)
+    tag_id = db.Column(db.Integer, db.ForeignKey('tag.id'), primary_key=True)

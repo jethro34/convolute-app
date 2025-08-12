@@ -27,7 +27,6 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
   useEffect(() => {
     if (keyword && !socket) {
       fetchStudents();
-      fetchPairings();
       setupWebSocket();
     }
     return () => {
@@ -139,48 +138,6 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
     }
   };
 
-  const fetchPairings = async () => {
-    try {
-      console.log('[DEBUG] fetchPairings called');
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/session/${keyword}/pairings`);
-      const data = await res.json();
-      if (res.ok) {
-        console.log('[DEBUG] fetched pairings:', data.pairings);
-        const formattedPairings = data.pairings.map(pairing => ({
-          round: pairing.round_number,
-          pairs: pairing.pairs.map(pair => {
-            const [leaderId, talkerId] = pair;
-            
-            // Handle dummy (0) in pairing
-            if (leaderId === 0 || talkerId === 0) {
-              const studentId = leaderId === 0 ? talkerId : leaderId;
-              const student = students.find(s => s.id === studentId);
-              const studentName = student ? student.name : `Student ${studentId}`;
-              
-              return {
-                students: [studentName, instructorParticipating ? 'Instructor' : 'On Break'],
-                prompt: instructorParticipating ? 'Generated prompt will go here' : 'Taking a break this round'
-              };
-            }
-            
-            // Regular student-student pairing
-            const leader = students.find(s => s.id === leaderId);
-            const talker = students.find(s => s.id === talkerId);
-            const leaderName = leader ? leader.name : `Student ${leaderId}`;
-            const talkerName = talker ? talker.name : `Student ${talkerId}`;
-            
-            return {
-              students: [leaderName, talkerName],
-              prompt: 'Generated prompt will go here'
-            };
-          })
-        }));
-        setPairings(formattedPairings);
-      }
-    } catch (error) {
-      console.error('Error fetching pairings:', error);
-    }
-  };
 
   const handleAddStudent = async (e) => {
     e.preventDefault();
@@ -277,15 +234,37 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
     if (sessionStatus === 'inactive') {
       // Create pairings when starting
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/session/${keyword}/pairings`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/session/${keyword}/pairings-with-prompts`, {
           method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt_filter: selectedPromptFilter
+          }),
         });
         
         if (res.ok) {
           const pairingData = await res.json();
           console.log('[DEBUG] Created pairings:', pairingData);
-          // Fetch updated pairings to display
-          await fetchPairings();
+          // Convert to display format and set directly
+          const displayPairings = [{
+            round: pairingData.pairings[0]?.round || 1,
+            pairs: pairingData.pairings.map(pairObj => {
+              if (pairObj.onBreakId) {
+                return {
+                  students: [pairObj.onBreakName, 'On Break'],
+                  prompt: 'Taking a break this round'
+                };
+              } else {
+                return {
+                  students: [pairObj.leaderName, pairObj.talkerName],
+                  prompt: pairObj.prompt
+                };
+              }
+            })
+          }];
+          setPairings(displayPairings);
           // Update session status to pairing
           setSessionStatus('pairing');
           setTimeRemaining(300);

@@ -7,6 +7,7 @@ from ..models import Session, Instructor, Student
 from ..extensions import db
 from ..services.keyword_service import KeywordService
 from ..services.pairing_service import PairingService
+from ..services.prompt_service import PromptService
 from ..socket_events.events import notify_student_joined, notify_student_left, notify_student_removed
 from . import session_bp
 
@@ -308,3 +309,83 @@ def update_instructor_participation(keyword):
     db.session.commit()
     
     return jsonify({'message': 'Participation setting updated'}), 200
+
+
+@session_bp.route('/<keyword>/pairings-with-prompts', methods=['POST'])
+def create_pairings_with_prompts(keyword):
+    """Create new pairings and return with prompts and names"""
+    try:
+        data = request.get_json() or {}
+        prompt_filter = data.get('prompt_filter', 'general')
+        
+        # Create fresh pairings
+        pairing_result = PairingService.create_pairings(keyword)
+        
+        # Get session and students for names
+        session = Session.query.filter_by(keyword=keyword).first()
+        if not session:
+            return jsonify({'message': 'Session not found'}), 404
+            
+        students = Student.query.filter_by(session_id=session.id).all()
+        student_map = {s.id: s.name for s in students}
+        
+        # Get instructor participation status
+        instructor = Instructor.query.get(session.instructor_id)
+        instructor_participating = instructor.participating if instructor else False
+        
+        # Build simple array of pairing objects
+        pairing_objects = []
+        for pair in pairing_result['pairs']:
+            leader_id, talker_id = pair
+            
+            # Handle dummy (0) pairing
+            if leader_id == 0 or talker_id == 0:
+                student_id = leader_id if leader_id != 0 else talker_id
+                student_name = student_map.get(student_id, f'Student {student_id}')
+                
+                if instructor_participating:
+                    # Student paired with instructor
+                    pairing_objects.append({
+                        'round': pairing_result['round_number'],
+                        'leaderId': student_id,
+                        'leaderName': student_name,
+                        'talkerId': 'instructor',
+                        'talkerName': 'Instructor',
+                        'prompt': PromptService.get_prompt_for_filter(prompt_filter)
+                    })
+                else:
+                    # Student on break
+                    pairing_objects.append({
+                        'round': pairing_result['round_number'],
+                        'onBreakId': student_id,
+                        'onBreakName': student_name
+                    })
+            else:
+                # Regular student-student pairing
+                leader_name = student_map.get(leader_id, f'Student {leader_id}')
+                talker_name = student_map.get(talker_id, f'Student {talker_id}')
+                
+                pairing_objects.append({
+                    'round': pairing_result['round_number'],
+                    'leaderId': leader_id,
+                    'leaderName': leader_name,
+                    'talkerId': talker_id,
+                    'talkerName': talker_name,
+                    'prompt': PromptService.get_prompt_for_filter(prompt_filter)
+                })
+        
+        return jsonify({'pairings': pairing_objects}), 201
+    except ValueError as e:
+        return jsonify({'message': str(e)}), 404
+    except Exception as e:
+        return jsonify({'message': 'Error creating pairings with prompts'}), 500
+
+
+@session_bp.route('/prompts/populate', methods=['POST'])
+def populate_prompts():
+    """Populate the database with sample prompts and tags"""
+    try:
+        result = PromptService.populate_sample_data()
+        return jsonify(result), 200
+    except Exception as e:
+        return jsonify({'message': 'Error populating prompts'}), 500

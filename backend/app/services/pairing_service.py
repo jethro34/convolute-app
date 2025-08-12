@@ -3,6 +3,7 @@
 import json
 from ..models import Student, Pairing, Session
 from ..extensions import db
+from .prompt_service import PromptService
 
 
 class PairingService:
@@ -70,6 +71,7 @@ class PairingService:
             'round_number': next_round,
             'pairs': pairings
         }
+    
 
     @staticmethod
     def _pair(pairing_list):
