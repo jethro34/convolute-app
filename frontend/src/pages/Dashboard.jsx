@@ -16,6 +16,7 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
   const [instructorParticipating, setInstructorParticipating] = useState(false);
   const processedStudents = useRef(new Set());
   const [pairings, setPairings] = useState([]);
+  const [currentPairingObjects, setCurrentPairingObjects] = useState([]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -265,6 +266,7 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
             })
           }];
           setPairings(displayPairings);
+          setCurrentPairingObjects(pairingData.pairings); // Store for discussion notification
           // Update session status to pairing
           setSessionStatus('pairing');
           setTimeRemaining(300);
@@ -275,13 +277,49 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
       } catch (error) {
         setErrorMessage('Network error creating pairings');
       }
+    } else if (sessionStatus === 'pairing') {
+      // Begin Discussion - notify students with prompts
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/session/${keyword}/begin-discussion`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            pairing_objects: currentPairingObjects
+          }),
+        });
+        
+        if (res.ok) {
+          setSessionStatus('talking');
+          setTimeRemaining(300);
+        } else {
+          const data = await res.json();
+          setErrorMessage(data.message || 'Error starting discussion');
+        }
+      } catch (error) {
+        setErrorMessage('Network error starting discussion');
+      }
     } else {
-      // Cycle through other statuses
-      const statuses = ['inactive', 'pairing', 'talking'];
-      const currentIndex = statuses.indexOf(sessionStatus);
-      const nextIndex = (currentIndex + 1) % statuses.length;
-      setSessionStatus(statuses[nextIndex]);
-      setTimeRemaining(300);
+      // Next Round - cycle back
+      try {
+        // Notify students to reset their state
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/session/${keyword}/reset-round`, {
+          method: 'POST',
+        });
+        
+        if (res.ok) {
+          setSessionStatus('inactive');
+          setTimeRemaining(300);
+          setPairings([]); // Clear previous pairings
+          setCurrentPairingObjects([]);
+        } else {
+          const data = await res.json();
+          setErrorMessage(data.message || 'Error resetting round');
+        }
+      } catch (error) {
+        setErrorMessage('Network error resetting round');
+      }
     }
   };
 

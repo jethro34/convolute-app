@@ -8,7 +8,7 @@ from ..extensions import db
 from ..services.keyword_service import KeywordService
 from ..services.pairing_service import PairingService
 from ..services.prompt_service import PromptService
-from ..socket_events.events import notify_student_joined, notify_student_left, notify_student_removed
+from ..socket_events.events import notify_student_joined, notify_student_left, notify_student_removed, notify_pairing_created, notify_discussion_started, notify_round_reset
 from . import session_bp
 
 
@@ -374,11 +374,49 @@ def create_pairings_with_prompts(keyword):
                     'prompt': PromptService.get_prompt_for_filter(prompt_filter)
                 })
         
+        # Notify students of their pairing assignments
+        notify_pairing_created(keyword, pairing_objects)
+        
         return jsonify({'pairings': pairing_objects}), 201
     except ValueError as e:
         return jsonify({'message': str(e)}), 404
     except Exception as e:
         return jsonify({'message': 'Error creating pairings with prompts'}), 500
+
+
+@session_bp.route('/<keyword>/begin-discussion', methods=['POST'])
+def begin_discussion(keyword):
+    """Start discussion phase - send prompts to leaders only"""
+    try:
+        data = request.get_json() or {}
+        pairing_objects = data.get('pairing_objects', [])
+        
+        if not pairing_objects:
+            return jsonify({'message': 'No pairing objects provided'}), 400
+        
+        # Notify students to begin discussion (prompts to leaders only)
+        notify_discussion_started(keyword, pairing_objects)
+        
+        return jsonify({'message': 'Discussion started successfully'}), 200
+    except Exception as e:
+        return jsonify({'message': 'Error starting discussion'}), 500
+
+
+@session_bp.route('/<keyword>/reset-round', methods=['POST'])
+def reset_round(keyword):
+    """Reset the round - notify students to clear their state"""
+    try:
+        # Verify session exists
+        session = Session.query.filter_by(keyword=keyword).first()
+        if not session:
+            return jsonify({'message': 'Session not found'}), 404
+        
+        # Notify students to reset their state
+        notify_round_reset(keyword)
+        
+        return jsonify({'message': 'Round reset successfully'}), 200
+    except Exception as e:
+        return jsonify({'message': 'Error resetting round'}), 500
 
 
 @session_bp.route('/prompts/populate', methods=['POST'])
