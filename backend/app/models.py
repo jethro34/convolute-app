@@ -16,8 +16,7 @@ class Session(db.Model):
     instructor_id = db.Column(db.Integer, db.ForeignKey("instructor.id"))
     start_time = db.Column(db.DateTime, default=db.func.current_timestamp())
     end_time = db.Column(db.DateTime, nullable=True)
-    student_count = db.Column(db.Integer, default=0)
-    prev_pairing_ids = db.Column(db.Text, default='[]')  # JSON array for round-robin state
+    student_count = db.Column(db.Integer, default=0)    # total number of students who have been in session
 
 
 class Keyword(db.Model):
@@ -34,14 +33,13 @@ class Student(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     session_id = db.Column(db.Integer, db.ForeignKey("session.id"))
-    joined_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-    round_count = db.Column(db.Integer, default=0)
-    has_led = db.Column(db.Text, default='{}')  # JSON string: {partner_id: count}
-    join_order = db.Column(db.Integer, default=0)  # Track joining order
+    round_count = db.Column(db.Integer, default=0)  # rounds student has participated in
 
 
 class Pairing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     session_id = db.Column(db.Integer, db.ForeignKey("session.id"))
     round_number = db.Column(db.Integer, nullable=False)
+    pairing_list = db.Column(db.Text, default='[]')    # JSON string: [student_id1, student_id2, ...]
+    rotation = db.Column(db.Text, default='[]')    # JSON string: [student_id1, student_id2, ...]
     pairs = db.Column(db.Text, nullable=False)  # JSON string: [[student_id1, student_id2], [student_id3, student_id4]]
