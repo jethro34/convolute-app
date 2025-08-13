@@ -1,20 +1,13 @@
 .container {
   min-height: 100vh;
   background: #0f172a;
-  display: flex;
   color: #e2e8f0;
   padding: 0;
   margin: 0;
-  max-width: none;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.sidebar {
-  width: 350px;
-  background: #1e293b;
-  padding: 2rem;
-  border-right: 1px solid #334155;
-  overflow-y: auto;
-}
 
 .header {
   background: #334155;
@@ -22,6 +15,29 @@
   border-radius: 0.75rem;
   margin-bottom: 2rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logoPlaceholder {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 0.75rem;
+  justify-self: start;
+}
+
+.headerCenter {
+  text-align: center;
+  justify-self: center;
 }
 
 .title {
@@ -41,7 +57,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-top: 1rem;
+  justify-self: end;
 }
 
 .avatar {
@@ -160,16 +176,35 @@
 }
 
 .mainContent {
-  flex: 1;
-  padding: 2rem;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
   overflow-y: auto;
+}
+
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dashboardGrid .card:nth-child(4) {
+  grid-column: 1 / -1;
+}
+
+.sessionDivider {
+  height: 1px;
+  background: #475569;
+  margin: 1.5rem 0;
 }
 
 .topCards {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-bottom: 2rem;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
 .bottomSection {
@@ -184,6 +219,8 @@
   border-radius: 0.75rem;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
   border: 1px solid #475569;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .cardTitle {
@@ -191,6 +228,47 @@
   font-weight: bold;
   color: #f1f5f9;
   margin-bottom: 0.5rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.cardTitleCentered {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #f1f5f9;
+  margin: 0;
+  text-align: center;
+}
+
+.infoButton {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid #6b7280;
+  background: #374151;
+  color: #9ca3af;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: none;
+  aspect-ratio: 1;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.infoButton:hover {
+  background: #4b5563;
+  color: #e5e7eb;
+  border-color: #9ca3af;
 }
 
 .cardDescription {
@@ -274,7 +352,7 @@
 .studentName {
   color: #e2e8f0;
   font-weight: 500;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
 }
 
 .sessionControls {
@@ -315,15 +393,6 @@
   color: #e2e8f0;
 }
 
-.statusBadge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin-bottom: 1.5rem;
-}
 
 .statusInactive {
   background: #451a03;
@@ -338,6 +407,35 @@
 .statusTalking {
   background: #064e3b;
   color: #6ee7b7;
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.participationToggle {
+  margin: 0;
+}
+
+.toggleLabel {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+  margin: 0;
 }
 
 .timerControls {
@@ -412,6 +510,7 @@
   color: #f1f5f9;
   margin-bottom: 1rem;
   margin-top: 2rem;
+  text-align: center;
 }
 
 .roundTitle:first-of-type {
@@ -429,6 +528,7 @@
   padding: 1.5rem;
   border-radius: 0.5rem;
   border: 1px solid #475569;
+  text-align: center;
 }
 
 .pairingStudents {
@@ -563,7 +663,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 0;
+  padding: 0.5rem 0;
   border-bottom: 1px solid #475569;
 }
 

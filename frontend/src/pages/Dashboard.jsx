@@ -412,11 +412,13 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
 
   return (
     <div className={styles.container}>
-      <div className={styles.sidebar}>
+      <div className={styles.mainContent}>
         <div className={styles.header}>
-          <div>
+          <div className={styles.logoPlaceholder}>
+            LOGO
+          </div>
+          <div className={styles.headerCenter}>
             <h1 className={styles.title}>Instructor Dashboard</h1>
-            <p className={styles.subtitle}>Manage your teaching sessions</p>
           </div>
           <div className={styles.userInfo}>
             <div className={styles.avatar}>
@@ -429,49 +431,52 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
           </div>
         </div>
 
-        <div className={styles.card}>
-          <h2 className={styles.cardTitle}>Active Session</h2>
-          <p className={styles.cardDescription}>
-            Session is running - share this keyword with students to join.
-          </p>
-          <div>
-            <p className={styles.keywordLabel}>
-              Session Keyword:
-            </p>
-            <div className={styles.keywordDisplay}>
-              {keyword}
-            </div>
-          </div>
-        </div>
-
-        <div className={styles.card}>
-          <h2 className={styles.cardTitle}>Session Analytics</h2>
-          <p className={styles.cardDescription}>
-            Monitor student engagement and participation in real-time.
-          </p>
-          <div className={styles.analyticsContainer}>
-            <div className={styles.analyticsItem}>
-              <div className={styles.analyticsNumber}>{students.length}</div>
-              <div className={styles.analyticsLabel}>Students</div>
-            </div>
-            <div className={styles.analyticsItem}>
-              <div className={styles.analyticsNumberRounds}>
-                {currentPairingObjects.length > 0 ? currentPairingObjects[0].round : 0}
-              </div>
-              <div className={styles.analyticsLabel}>Current Round</div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-      
-      <div className={styles.mainContent}>
-        <div className={styles.topCards}>
+        <div className={styles.dashboardGrid}>
           <div className={styles.card}>
-            <h2 className={styles.cardTitle}>Session Controls</h2>
-            <p className={styles.cardDescription}>
-              Manage your session and create pairings
-            </p>
+            <div className={styles.cardHeader}>
+              <h2 className={styles.cardTitleCentered}>Active Session</h2>
+              <button className={styles.infoButton} title="Session is running - share this keyword with students to join">
+                ℹ
+              </button>
+            </div>
+            <div>
+              <p className={styles.keywordLabel}>
+                Session Keyword:
+              </p>
+              <div className={styles.keywordDisplay}>
+                {keyword}
+              </div>
+            </div>
+
+            <div className={styles.sessionDivider}></div>
+
+            <div className={styles.cardHeader}>
+              <h2 className={styles.cardTitleCentered}>Session Analytics</h2>
+              <button className={styles.infoButton} title="Monitor student engagement and participation in real-time">
+                ℹ
+              </button>
+            </div>
+            <div className={styles.analyticsContainer}>
+              <div className={styles.analyticsItem}>
+                <div className={styles.analyticsNumber}>{students.length}</div>
+                <div className={styles.analyticsLabel}>Students</div>
+              </div>
+              <div className={styles.analyticsItem}>
+                <div className={styles.analyticsNumberRounds}>
+                  {currentPairingObjects.length > 0 ? currentPairingObjects[0].round : 0}
+                </div>
+                <div className={styles.analyticsLabel}>Current Round</div>
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.card}>
+            <div className={styles.cardHeader}>
+              <h2 className={styles.cardTitleCentered}>Session Controls</h2>
+              <button className={styles.infoButton} title="Manage your session and create pairings">
+                ℹ
+              </button>
+            </div>
             
             <div className={styles.filterGroup}>
               <label className={styles.filterLabel}>Prompt Filter</label>
@@ -488,8 +493,26 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
               </select>
             </div>
 
-            <div className={`${styles.statusBadge} ${styles[`status${sessionStatus.charAt(0).toUpperCase() + sessionStatus.slice(1)}`]}`}>
-              Status: {sessionStatus.charAt(0).toUpperCase() + sessionStatus.slice(1)}
+            <div className={styles.statusRow}>
+              <div className={`${styles.statusBadge} ${styles[`status${sessionStatus.charAt(0).toUpperCase() + sessionStatus.slice(1)}`]}`}>
+                Status: {sessionStatus.charAt(0).toUpperCase() + sessionStatus.slice(1)}
+              </div>
+
+              <div className={styles.participationToggle}>
+                <label className={styles.toggleLabel}>
+                  <input
+                    type="checkbox"
+                    checked={instructorParticipating}
+                    onChange={handleParticipationToggle}
+                    disabled={students.length % 2 === 0}
+                    className={styles.toggleInput}
+                  />
+                  <span className={styles.toggleSlider}></span>
+                  <span className={styles.toggleText}>
+                    Instructor Participating
+                  </span>
+                </label>
+              </div>
             </div>
 
             <div className={styles.timerControls}>
@@ -524,22 +547,6 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
               <div className={styles.timerLabel}>Time Remaining</div>
             </div>
 
-            <div className={styles.participationToggle}>
-              <label className={styles.toggleLabel}>
-                <input
-                  type="checkbox"
-                  checked={instructorParticipating}
-                  onChange={handleParticipationToggle}
-                  disabled={students.length % 2 === 0}
-                  className={styles.toggleInput}
-                />
-                <span className={styles.toggleSlider}></span>
-                <span className={styles.toggleText}>
-                  Instructor Participating {students.length % 2 === 0 && '(even students)'}
-                </span>
-              </label>
-            </div>
-
             <button className={styles.cardButton} onClick={handleStatusChange}>
               {sessionStatus === 'inactive' ? 'Start Pairing' : 
                sessionStatus === 'pairing' ? 'Begin Discussion' : 'Next Round'}
@@ -559,86 +566,94 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
           </div>
           
           <div className={styles.card}>
-            <h2 className={styles.cardTitle}>Session Pairings</h2>
-            <p className={styles.cardDescription}>
-              Current and previous pairing rounds
-            </p>
-            {pairings.length > 0 ? (
-              pairings.map(round => (
-                <div key={round.round} className={styles.roundContainer}>
-                  <h4 className={styles.roundTitle}>Round {round.round}</h4>
-                  <div className={styles.pairingsList}>
-                    {round.pairs.map((pair, index) => (
-                      <div key={index} className={styles.pairingItem}>
-                        <div className={styles.pairingStudents}>
-                          {pair.students[1] === 'On Break' ? `${pair.students[0]} is on break` : pair.students.join(' & ')}
-                        </div>
-                        <div className={styles.pairingPrompt}>
-                          {pair.prompt}
-                        </div>
-                      </div>
-                    ))}
+            <div className={styles.cardHeader}>
+              <h2 className={styles.cardTitleCentered}>Active Students: {students.length}</h2>
+              <button className={styles.infoButton} title="Manage session participants">
+                ℹ
+              </button>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+              <div className={styles.connectionStatus}>
+                <div className={`${styles.connectionDot} ${isConnected ? styles.connected : ''}`}></div>
+                {isConnected ? 'Live' : 'Offline'}
+              </div>
+            </div>
+            
+            <form onSubmit={handleAddStudent} className={styles.addStudentForm}>
+              <input
+                type="text"
+                value={newStudentName}
+                onChange={(e) => setNewStudentName(e.target.value)}
+                placeholder="Enter student name..."
+                className={styles.addStudentInput}
+                disabled={addingStudent}
+              />
+              <button 
+                type="submit" 
+                className={styles.addStudentButton}
+                disabled={addingStudent || !newStudentName.trim()}
+              >
+                {addingStudent ? 'Adding...' : 'Add'}
+              </button>
+            </form>
+            
+            {errorMessage && (
+              <div className={styles.errorMessage}>{errorMessage}</div>
+            )}
+            
+            {students.length > 0 ? (
+              students.map(student => (
+                <div key={student.id} className={styles.studentItemWithActions}>
+                  <div className={styles.studentInfo}>
+                    <div className={styles.studentAvatar}>
+                      {student.name[0].toUpperCase()}
+                    </div>
+                    <span className={styles.studentName}>{student.name}</span>
                   </div>
+                  <button 
+                    onClick={() => handleRemoveStudent(student.id)}
+                    className={styles.removeStudentButton}
+                    title="Remove student"
+                  >
+                    Remove
+                  </button>
                 </div>
               ))
             ) : (
-              <div className={styles.emptyState}>No pairings created yet</div>
+              <div className={styles.emptyState}>No students added yet</div>
             )}
           </div>
         </div>
 
         <div className={styles.card}>
-          <h2 className={styles.cardTitle}>Students ({students.length})</h2>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <p className={styles.cardDescription}>Manage session participants</p>
-            <div className={styles.connectionStatus}>
-              <div className={`${styles.connectionDot} ${isConnected ? styles.connected : ''}`}></div>
-              {isConnected ? 'Live' : 'Offline'}
-            </div>
-          </div>
-          
-          <form onSubmit={handleAddStudent} className={styles.addStudentForm}>
-            <input
-              type="text"
-              value={newStudentName}
-              onChange={(e) => setNewStudentName(e.target.value)}
-              placeholder="Enter student name..."
-              className={styles.addStudentInput}
-              disabled={addingStudent}
-            />
-            <button 
-              type="submit" 
-              className={styles.addStudentButton}
-              disabled={addingStudent || !newStudentName.trim()}
-            >
-              {addingStudent ? 'Adding...' : 'Add'}
+          <div className={styles.cardHeader}>
+            <h2 className={styles.cardTitleCentered}>Session Pairings</h2>
+            <button className={styles.infoButton} title="Pairings and prompts for the current round">
+              ℹ
             </button>
-          </form>
-          
-          {errorMessage && (
-            <div className={styles.errorMessage}>{errorMessage}</div>
-          )}
-          
-          {students.length > 0 ? (
-            students.map(student => (
-              <div key={student.id} className={styles.studentItemWithActions}>
-                <div className={styles.studentInfo}>
-                  <div className={styles.studentAvatar}>
-                    {student.name[0].toUpperCase()}
-                  </div>
-                  <span className={styles.studentName}>{student.name}</span>
+          </div>
+          {pairings.length > 0 ? (
+            pairings.map(round => (
+              <div key={round.round} className={styles.roundContainer}>
+                <h4 className={styles.roundTitle}>Round {round.round}</h4>
+                <div className={styles.pairingsList}>
+                  {round.pairs.map((pair, index) => (
+                    <div key={index} className={styles.pairingItem}>
+                      <div className={styles.pairingStudents}>
+                        {pair.students[1] === 'On Break' ? `${pair.students[0]} is on break` : pair.students.join(' & ')}
+                      </div>
+                      {sessionStatus === 'talking' && (
+                        <div className={styles.pairingPrompt}>
+                          {pair.prompt}
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
-                <button 
-                  onClick={() => handleRemoveStudent(student.id)}
-                  className={styles.removeStudentButton}
-                  title="Remove student"
-                >
-                  Remove
-                </button>
               </div>
             ))
           ) : (
-            <div className={styles.emptyState}>No students added yet</div>
+            <div className={styles.emptyState}>No pairings created yet</div>
           )}
         </div>
       </div>
