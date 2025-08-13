@@ -394,8 +394,10 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
               <div className={styles.analyticsLabel}>Students</div>
             </div>
             <div className={styles.analyticsItem}>
-              <div className={styles.analyticsNumberRounds}>{pairings.length}</div>
-              <div className={styles.analyticsLabel}>Rounds</div>
+              <div className={styles.analyticsNumberRounds}>
+                {currentPairingObjects.length > 0 ? currentPairingObjects[0].round : 0}
+              </div>
+              <div className={styles.analyticsLabel}>Current Round</div>
             </div>
           </div>
         </div>
@@ -469,7 +471,7 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
                     {round.pairs.map((pair, index) => (
                       <div key={index} className={styles.pairingItem}>
                         <div className={styles.pairingStudents}>
-                          {pair.students.join(' & ')}
+                          {pair.students[1] === 'On Break' ? `${pair.students[0]} is on break` : pair.students.join(' & ')}
                         </div>
                         <div className={styles.pairingPrompt}>
                           {pair.prompt}
