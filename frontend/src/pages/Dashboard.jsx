@@ -258,11 +258,27 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
     }
   };
 
-  const handleResetRound = () => {
-    setSessionStatus('inactive');
-    setTimerRunning(false);
-    setIsPaused(false);
-    setTimeRemaining(pairingDuration * 60);
+  const handleResetRound = async () => {
+    setTimerRunning(false); // Stop talking timer
+    try {
+      // Notify students to reset their state
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/session/${keyword}/reset-round`, {
+        method: 'POST',
+      });
+      
+      if (res.ok) {
+        setSessionStatus('inactive');
+        setTimeRemaining(pairingDuration * 60);
+        setIsPaused(false);
+        setPairings([]); // Clear pairings display
+        setCurrentPairingObjects([]); // Clear pairing objects
+      } else {
+        const data = await res.json();
+        setErrorMessage(data.message || 'Error resetting round');
+      }
+    } catch (error) {
+      setErrorMessage('Network error resetting round');
+    }
   };
 
   const promptFilters = [
