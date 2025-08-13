@@ -121,10 +121,9 @@ export default function Room({ keyword, username, onLeave }) {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.sessionInfo}>
-          <div className={styles.sessionKeyword}>Session: {keyword}</div>
-          <div className={styles.studentName}>Student: {username}</div>
+      <div className={styles.topHeader}>
+        <div className={styles.logoCard}>
+          LOGO
         </div>
         <button 
           className={styles.leaveButton}
@@ -134,64 +133,100 @@ export default function Room({ keyword, username, onLeave }) {
         </button>
       </div>
 
-      <div className={styles.content}>
-        <div className={`${styles.statusBadge} ${isConnected ? styles.statusConnected : styles.statusWaiting}`}>
+      <div className={styles.infoCard}>
+        <div className={styles.sessionKeyword}>Keyword: {keyword}</div>
+        <div className={styles.studentName}>Username: {username}</div>
+        <div className={styles.connectionStatus}>
+          <div className={`${styles.connectionDot} ${isConnected ? styles.connected : ''}`}></div>
           {isConnected ? 'Connected' : 'Connecting...'}
         </div>
+      </div>
+
+      <div className={styles.content}>
 
         {currentPhase === 'waiting' && (
           <div className={styles.roomMessage}>
-            Waiting for instructor to start pairings...
+            <p>
+              Waiting for the pairings.
+            </p>
+            <p>
+              Please be patient...
+            </p>
           </div>
         )}
 
         {currentPhase === 'break' && (
           <div className={styles.roomMessage}>
-            <h2 className={styles.roomMessage}>Taking a Break</h2>
+            <h2 className={styles.roomMessage}>Break time!</h2>
             <p className={styles.roomMessage}>
-              You're sitting out this round. Relax and wait for the next round!
+              You're sitting out this round.
+            </p>
+            <p className={styles.roomMessage}>
+              Relax and wait for the next round.
             </p>
           </div>
         )}
 
         {currentPhase === 'paired' && pairingInfo && (
-          <div className={styles.roomMessage}>
-            <h2 className={styles.roomMessage}>
-              You are the {role}
-            </h2>
-            <p>
-              Paired with: <strong>{pairingInfo.partner}</strong>
-            </p>
-            <p>
-              Waiting for instructor to begin discussion...
-            </p>
-          </div>
+          <>
+            <div className={styles.roomMessage}>
+              <p>
+                Your partner is <strong>{pairingInfo.partner}</strong>.
+              </p>
+              <p>
+                {role === 'Leader' ? (
+                  <>You will be <strong>leading</strong> the talk.</>
+                ) : (
+                  <>You will be <strong>doing</strong> the talk.</>
+                )}
+              </p>
+              <p>
+                Please find <strong>{pairingInfo.partner}</strong>.
+              </p>
+            </div>
+            <div className={styles.roomMessage}>
+              <p>
+                Conversation is starting soon...
+              </p>
+            </div>
+          </>
         )}
 
         {currentPhase === 'discussing' && (
-          <div className={styles.roomMessage}>
-            <h2 className={styles.roomMessage}>
-              Your Role: {role}
-            </h2>
-            {pairingInfo && (
-              <p className={styles.roomMessage}>
-                Partner: <strong>{pairingInfo.partner}</strong>
+          <>
+            <div className={styles.roomMessage}>
+              <p>
+                Your partner is <strong>{pairingInfo.partner}</strong>.
               </p>
-            )}
+              <p>
+                {role === 'Leader' ? (
+                  <>You are <strong>leading</strong> the talk.</>
+                ) : (
+                  <>You are <strong>doing</strong> the talk.</>
+                )}
+              </p>
+            </div>
             {role === 'Leader' && prompt && (
-              <div>
-                <h3 className={styles.roomMessage}>
-                  Please read the discussion prompt to <strong>{pairingInfo.partner}</strong>:
-                </h3>
-                <p className={styles.roomMessage}>{prompt}</p>
+              <div className={styles.roomMessage}>
+                <p>
+                  Please <strong>read</strong> the prompt to <strong>{pairingInfo.partner}</strong>:
+                </p>
+                <p style={{ marginTop: '1rem' }}>
+                  {prompt}
+                </p>
               </div>
             )}
             {role === 'Talker' && (
-              <p className={styles.roomMessage}>
-                Discussion has started. Please answer {pairingInfo?.partner}'s prompt.
-              </p>
+              <div className={styles.roomMessage}>
+                <p>
+                  The conversation has started.
+                </p>
+                <p>
+                  Please <strong>answer</strong> <strong>{pairingInfo?.partner}</strong>'s prompt.
+                </p>
+              </div>
             )}
-          </div>
+          </>
         )}
 
         {/* Legacy support for old prompt system */}

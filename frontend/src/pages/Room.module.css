@@ -1,9 +1,41 @@
 .container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  height: 100vh;
+  width: 100vw;
+  background: #0f172a;
   padding: 2rem;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.topHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.logoCard {
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  color: white;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  font-size: 0.875rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.infoCard {
+  background: #334155;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  border: 1px solid #475569;
+  margin: 0 1rem 2rem 1rem;
 }
 
 .header {
@@ -24,14 +56,19 @@
 }
 
 .sessionKeyword {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  color: #1f2937;
+  color: #f1f5f9;
+  margin-bottom: 0.5rem;
+  text-align: center;
 }
 
 .studentName {
-  color: #6b7280;
-  font-size: 1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #f1f5f9;
+  margin-bottom: 0.5rem;
+  text-align: center;
 }
 
 .leaveButton {
@@ -51,10 +88,11 @@
 }
 
 .content {
-  background: white;
+  background: #334155;
   padding: 2rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  border: 1px solid #475569;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -79,26 +117,35 @@
 }
 
 .roomMessage {
-  color: #6b7280;
+  color: #e2e8f0;
   font-size: 1.25rem;
 }
 
-.statusBadge {
-  display: inline-flex;
+.roomMessage p {
+  margin: 0.25rem 0;
+}
+
+.roomMessage + .roomMessage {
+  margin-top: 1.5rem;
+}
+
+.connectionStatus {
+  display: flex;
   align-items: center;
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin-bottom: 1rem;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin: 1rem auto 0 auto;
 }
 
-.statusConnected {
-  background: #d1fae5;
-  color: #065f46;
+.connectionDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #dc2626;
 }
 
-.statusWaiting {
-  background: #fef3c7;
-  color: #92400e;
+.connectionDot.connected {
+  background: #10b981;
 }
