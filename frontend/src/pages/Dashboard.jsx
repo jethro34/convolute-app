@@ -12,7 +12,11 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
   const [isConnected, setIsConnected] = useState(false);
   const [selectedPromptFilter, setSelectedPromptFilter] = useState('general');
   const [sessionStatus, setSessionStatus] = useState('inactive');
-  const [timeRemaining, setTimeRemaining] = useState(300);
+  const [timeRemaining, setTimeRemaining] = useState(60); // Default to 1 minute (pairingDuration)
+  const [timerRunning, setTimerRunning] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [pairingDuration, setPairingDuration] = useState(1); // minutes
+  const [talkingDuration, setTalkingDuration] = useState(3); // minutes
   const [instructorParticipating, setInstructorParticipating] = useState(false);
   const processedStudents = useRef(new Set());
   const [pairings, setPairings] = useState([]);
@@ -20,10 +24,26 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeRemaining(prev => (prev > 0 ? prev - 1 : 0));
+      if (timerRunning && !isPaused) {
+        setTimeRemaining(prev => {
+          if (prev <= 1) {
+            // Timer reached 0, trigger automatic transition
+            setTimerRunning(false);
+            if (sessionStatus === 'pairing') {
+              // Auto-transition from pairing to talking
+              setTimeout(() => handleStatusChange(), 100);
+            } else if (sessionStatus === 'talking') {
+              // Auto-transition from talking to inactive (next round)
+              setTimeout(() => handleStatusChange(), 100);
+            }
+            return 0;
+          }
+          return prev - 1;
+        });
+      }
     }, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [timerRunning, isPaused, sessionStatus]);
 
   useEffect(() => {
     if (keyword && !socket) {
@@ -224,6 +244,27 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
     }
   };
 
+  const handlePauseRound = () => {
+    if (isPaused) {
+      // Resume: continue timer if session was running before pause
+      setIsPaused(false);
+      if (sessionStatus === 'pairing' || sessionStatus === 'talking') {
+        setTimerRunning(true);
+      }
+    } else {
+      // Pause: stop timer but keep everything else frozen
+      setIsPaused(true);
+      setTimerRunning(false);
+    }
+  };
+
+  const handleResetRound = () => {
+    setSessionStatus('inactive');
+    setTimerRunning(false);
+    setIsPaused(false);
+    setTimeRemaining(pairingDuration * 60);
+  };
+
   const promptFilters = [
     { value: 'general', label: 'General Discussion' },
     { value: 'technical', label: 'Technical Topics' },
@@ -269,7 +310,9 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
           setCurrentPairingObjects(pairingData.pairings); // Store for discussion notification
           // Update session status to pairing
           setSessionStatus('pairing');
-          setTimeRemaining(300);
+          setTimeRemaining(pairingDuration * 60);
+          setTimerRunning(true); // Start timer for pairing
+          setIsPaused(false); // Clear paused state
         } else {
           const data = await res.json();
           setErrorMessage(data.message || 'Error creating pairings');
@@ -279,6 +322,7 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
       }
     } else if (sessionStatus === 'pairing') {
       // Begin Discussion - notify students with prompts
+      setTimerRunning(false); // Stop pairing timer
       try {
         const res = await fetch(`${import.meta.env.VITE_API_URL}/session/${keyword}/begin-discussion`, {
           method: 'POST',
@@ -292,7 +336,9 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
         
         if (res.ok) {
           setSessionStatus('talking');
-          setTimeRemaining(300);
+          setTimeRemaining(talkingDuration * 60);
+          setTimerRunning(true); // Start timer for talking
+          setIsPaused(false); // Clear paused state
         } else {
           const data = await res.json();
           setErrorMessage(data.message || 'Error starting discussion');
@@ -302,6 +348,7 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
       }
     } else {
       // Next Round - cycle back
+      setTimerRunning(false); // Stop talking timer
       try {
         // Notify students to reset their state
         const res = await fetch(`${import.meta.env.VITE_API_URL}/session/${keyword}/reset-round`, {
@@ -310,7 +357,8 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
         
         if (res.ok) {
           setSessionStatus('inactive');
-          setTimeRemaining(300);
+          setTimeRemaining(pairingDuration * 60);
+          setTimerRunning(false); // Don't start timer, just set it to pairing duration
           setPairings([]); // Clear previous pairings
           setCurrentPairingObjects([]);
         } else {
@@ -359,9 +407,6 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
               {userEmail ? userEmail[0].toUpperCase() : 'U'}
             </div>
             <span className={styles.userName}>{userEmail || 'User'}</span>
-            <button className={styles.endSessionBtn} onClick={handleEndSession}>
-              End Session
-            </button>
             <button className={styles.logoutBtn} onClick={handleLogout}>
               Logout
             </button>
@@ -431,6 +476,33 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
               Status: {sessionStatus.charAt(0).toUpperCase() + sessionStatus.slice(1)}
             </div>
 
+            <div className={styles.timerControls}>
+              <div className={styles.timerControl}>
+                <label className={styles.timerLabel}>Pairing Time:</label>
+                <select 
+                  className={styles.timerSelect}
+                  value={pairingDuration}
+                  onChange={(e) => setPairingDuration(Number(e.target.value))}
+                >
+                  {Array.from({length: 5}, (_, i) => i + 1).map(min => (
+                    <option key={min} value={min}>{min} min</option>
+                  ))}
+                </select>
+              </div>
+              <div className={styles.timerControl}>
+                <label className={styles.timerLabel}>Talking Time:</label>
+                <select 
+                  className={styles.timerSelect}
+                  value={talkingDuration}
+                  onChange={(e) => setTalkingDuration(Number(e.target.value))}
+                >
+                  {Array.from({length: 15}, (_, i) => i + 1).map(min => (
+                    <option key={min} value={min}>{min} min</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             <div className={styles.timerDisplay}>
               <div className={styles.timerTime}>{formatTime(timeRemaining)}</div>
               <div className={styles.timerLabel}>Time Remaining</div>
@@ -456,6 +528,18 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
               {sessionStatus === 'inactive' ? 'Start Pairing' : 
                sessionStatus === 'pairing' ? 'Begin Discussion' : 'Next Round'}
             </button>
+
+            <div className={styles.sessionActionButtons}>
+              <button className={styles.sessionActionButton} onClick={handlePauseRound}>
+                {isPaused ? 'Resume' : 'Pause'}
+              </button>
+              <button className={styles.sessionActionButton} onClick={handleResetRound}>
+                Reset Round
+              </button>
+              <button className={styles.sessionActionButton} onClick={handleEndSession}>
+                End Session
+              </button>
+            </div>
           </div>
           
           <div className={styles.card}>
