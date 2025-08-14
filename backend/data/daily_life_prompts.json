@@ -1,0 +1,566 @@
+[
+    {
+        "prompt": "What do you usually eat for breakfast?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "How do you usually get to work or school?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Describe your typical morning routine.",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What\u2019s the first thing you do after waking up?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "How often do you go grocery shopping?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What chores do you usually do at home?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "How do you usually spend your evenings?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What\u2019s your favorite time of the day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you prefer cooking at home or eating out?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "How do you usually spend your weekends?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you make your bed in the morning?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What\u2019s your favorite household chore?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What\u2019s your least favorite chore?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "How do you usually do your laundry?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you prefer showers or baths?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "How often do you clean your house?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What\u2019s your usual bedtime?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you check your phone before sleeping?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually plan your day in advance?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "How do you usually commute to work or school?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What\u2019s the first thing you do when you get home?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you often eat snacks between meals?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "How often do you drink coffee or tea?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What\u2019s your favorite drink during the day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "How often do you exercise?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you prefer exercising in the morning or evening?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What do you usually have for lunch?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "How long is your daily commute?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you often take naps?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What time do you usually wake up?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually set an alarm to wake up?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What\u2019s your favorite part of your daily routine?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What\u2019s the busiest part of your day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually eat dinner with your family?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "How often do you eat fast food?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually watch TV in the evening?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What\u2019s the last thing you do before going to bed?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you use a planner or calendar for daily tasks?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What\u2019s your usual weekend morning routine?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "How do you usually spend your lunch break?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you often eat breakfast outside?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you take public transport often?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What\u2019s your favorite way to relax after a busy day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually do meal prep for the week?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you prefer working from home or at an office?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What\u2019s the most time-consuming part of your day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you often go for walks?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What do you usually do after dinner?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually check the news every day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "How do you usually spend your mornings?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you drink water throughout the day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you often go to the supermarket?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually make a to-do list for the day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you have a regular bedtime routine?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "How often do you check social media in a day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually have a set time for meals?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you prepare your clothes the night before?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you listen to music during the day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you often run errands during the week?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you have a favorite daily habit?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What\u2019s your favorite snack during the day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually spend time outside every day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you use your phone first thing in the morning?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually work out at home or at the gym?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you like to have a slow morning or a busy one?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you often talk to your neighbors?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually walk or drive to nearby places?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you take breaks during work or study time?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually do the dishes right after eating?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "What\u2019s the first thing you drink in the morning?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually eat dessert after dinner?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you like to start your day with exercise?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually go to bed at the same time every night?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you often visit cafes during the week?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you prefer cooking alone or with someone?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you have breakfast at the same time every day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually keep your workspace tidy?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually set goals for the day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you drink coffee every morning?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you take a shower in the morning or at night?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually go shopping on weekdays or weekends?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you eat breakfast every day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you listen to podcasts daily?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually prepare lunch at home or buy it?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you often call friends or family during the week?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you take time to stretch during the day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually pack snacks for work or school?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you often have leftovers for lunch?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually keep track of your daily expenses?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you like to start your day with reading?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually keep your phone nearby during the day?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you prefer a busy day or a quiet one?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you usually check the weather in the morning?",
+        "tags": [
+            "daily_life"
+        ]
+    },
+    {
+        "prompt": "Do you like to write in a journal daily?",
+        "tags": [
+            "daily_life"
+        ]
+    }
+]

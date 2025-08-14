@@ -1,0 +1,602 @@
+[
+  {
+    "prompt": "Tell me about yourself.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What interests you about this position?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Why do you want to work for our company?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What are your greatest strengths?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What is your biggest weakness?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a time when you solved a difficult problem.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you worked in a team.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you prioritize your work?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Where do you see yourself in five years?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you disagreed with a colleague.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you handle pressure at work?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a project you are most proud of.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What motivates you to do your best work?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you handle feedback or criticism?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe your ideal work environment.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you had to meet a tight deadline.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you stay organized?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What do you know about our company?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Why should we hire you?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you failed and how you handled it.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you handle multiple tasks at once?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What do you look for in a manager?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a time you went above and beyond at work.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What’s your approach to learning new skills?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you handle conflicts in the workplace?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What’s your leadership style?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you trained or mentored someone.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What do you do to stay current in your field?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you handle uncertainty at work?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a difficult decision you had to make.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What is your greatest professional achievement?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a time you implemented a new idea.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What kind of work culture do you thrive in?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you manage stress?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you had to persuade someone.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What do you think makes a good team member?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you adapted to a change at work.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you set goals for yourself?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What’s the most challenging project you’ve worked on?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you improved a process.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you deal with repetitive tasks?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a time when you had to learn something quickly.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you handle a heavy workload?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What’s the most important lesson you’ve learned in your career?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a time you resolved a customer complaint.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What makes you a good fit for this role?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you managed a conflict between others.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you approach problem-solving?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you made a mistake and what you learned.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What do you enjoy most about your work?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you decide what tasks to delegate?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a time you exceeded expectations.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you managed competing priorities.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What kind of challenges are you looking for in this role?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you introduced a new idea to your team.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you prepare for important meetings?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a time you made a decision with incomplete information.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What do you consider your biggest professional challenge?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you received constructive criticism.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What’s your approach to time management?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you handle last-minute changes?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you had to explain something complex.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What’s your strategy for building relationships at work?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a time you took initiative.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you handle working with difficult people?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you successfully negotiated something.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What’s your process for solving a new type of problem?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you ensure you meet deadlines?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you worked with minimal supervision.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a time you had to compromise.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What’s your approach to decision-making?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you supported a colleague.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you handle workplace gossip?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What do you do when you don’t know how to do something?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a time you worked under budget constraints.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you respond to setbacks?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you built trust with someone.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you approach building new skills?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What’s your method for staying focused on long projects?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a time you provided excellent customer service.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you manage expectations?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you collaborated with a different department.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you motivate yourself during challenging times?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a time you made a process more efficient.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you had to quickly adapt to change.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What’s your process for handling sensitive information?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a time you improved team communication.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you handle ambiguity in projects?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you influenced a decision.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What’s your process for preparing for a presentation?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you ensure quality in your work?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a time you had to coordinate multiple people.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What do you do if you realize you’re behind schedule?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you used data to make a decision.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you prepare for a performance review?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a time you had to adjust to a new boss.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Tell me about a time you managed risk in a project.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "How do you decide when to ask for help?",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "Describe a time you implemented feedback successfully.",
+    "tags": [
+      "job_interview"
+    ]
+  },
+  {
+    "prompt": "What do you want to achieve in your next role?",
+    "tags": [
+      "job_interview"
+    ]
+  }
+]

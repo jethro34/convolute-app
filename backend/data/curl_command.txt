@@ -1,0 +1,5 @@
+# how to export .json files to db
+# execute from /data:
+  hejtor@Justos-MacBook-Pro:~/Projects/convolute-app/backend/data $ 
+# curl command:  
+  curl -X POST -F "file=@present_perfect_prompts.json" http://localhost:5000/api/session/prompts/bulk-import

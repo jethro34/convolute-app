@@ -53,9 +53,21 @@ class Prompt(db.Model):
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     tag = db.Column(db.String(50), nullable=False, unique=True)
+    public = db.Column(db.Boolean, default=True, nullable=False)
 
 
 class PromptTag(db.Model):
     __tablename__ = 'prompt_tags'
     prompt_id = db.Column(db.Integer, db.ForeignKey('prompt.id'), primary_key=True)
     tag_id = db.Column(db.Integer, db.ForeignKey('tag.id'), primary_key=True)
+
+
+class PromptPointer(db.Model):
+    __tablename__ = 'prompt_pointers'
+    id = db.Column(db.Integer, primary_key=True)
+    session_id = db.Column(db.Integer, db.ForeignKey('session.id'), nullable=False)
+    tag_filter = db.Column(db.String(50), nullable=False)  # The selected filter/tag
+    current_index = db.Column(db.Integer, default=0)  # Points to next prompt to deliver
+    
+    # Unique constraint to ensure one pointer per session-tag combination
+    __table_args__ = (db.UniqueConstraint('session_id', 'tag_filter', name='unique_session_tag_pointer'),)

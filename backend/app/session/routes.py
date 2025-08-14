@@ -1,9 +1,12 @@
 # convolute_app/app/session/routes.py
 
+import json
+import csv
+import io
 from flask import request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, verify_jwt_in_request
 from jwt.exceptions import DecodeError
-from ..models import Session, Instructor, Student
+from ..models import Session, Instructor, Student, Tag
 from ..extensions import db
 from ..services.keyword_service import KeywordService
 from ..services.pairing_service import PairingService
@@ -351,7 +354,7 @@ def create_pairings_with_prompts(keyword):
                         'leaderName': student_name,
                         'talkerId': 'instructor',
                         'talkerName': 'Instructor',
-                        'prompt': PromptService.get_prompt_for_filter(prompt_filter)
+                        'prompt': PromptService.get_prompt_for_filter_with_session(prompt_filter, keyword)
                     })
                 else:
                     # Student on break
@@ -371,7 +374,7 @@ def create_pairings_with_prompts(keyword):
                     'leaderName': leader_name,
                     'talkerId': talker_id,
                     'talkerName': talker_name,
-                    'prompt': PromptService.get_prompt_for_filter(prompt_filter)
+                    'prompt': PromptService.get_prompt_for_filter_with_session(prompt_filter, keyword)
                 })
         
         # Notify students of their pairing assignments
@@ -427,3 +430,107 @@ def populate_prompts():
         return jsonify(result), 200
     except Exception as e:
         return jsonify({'message': 'Error populating prompts'}), 500
+
+
+@session_bp.route('/prompts/bulk-import', methods=['POST'])
+def bulk_import_prompts():
+    """
+    Bulk import prompts from uploaded JSON or CSV file.
+    
+    Expected formats:
+    JSON: [{"prompt": "text", "tags": ["tag1", "tag2"]}, ...]
+    CSV: prompt,tags (where tags are comma-separated in the tags column)
+    """
+    try:
+        # Check if file was uploaded
+        if 'file' not in request.files:
+            return jsonify({'message': 'No file uploaded'}), 400
+        
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'message': 'No file selected'}), 400
+        
+        # Read file content
+        file_content = file.read().decode('utf-8')
+        filename = file.filename.lower()
+        
+        # Parse based on file extension
+        if filename.endswith('.json'):
+            try:
+                prompts_data = json.loads(file_content)
+            except json.JSONDecodeError as e:
+                return jsonify({'message': f'Invalid JSON format: {str(e)}'}), 400
+                
+        elif filename.endswith('.csv'):
+            try:
+                # Parse CSV
+                csv_reader = csv.DictReader(io.StringIO(file_content))
+                prompts_data = []
+                
+                for row in csv_reader:
+                    if 'prompt' in row:
+                        # Parse tags (comma-separated string to list)
+                        tags = []
+                        if 'tags' in row and row['tags']:
+                            tags = [tag.strip() for tag in row['tags'].split(',') if tag.strip()]
+                        
+                        prompts_data.append({
+                            'prompt': row['prompt'],
+                            'tags': tags
+                        })
+                        
+            except Exception as e:
+                return jsonify({'message': f'Invalid CSV format: {str(e)}'}), 400
+        else:
+            return jsonify({'message': 'Unsupported file format. Please upload JSON or CSV files.'}), 400
+        
+        # Validate data structure
+        if not isinstance(prompts_data, list):
+            return jsonify({'message': 'File must contain a list of prompts'}), 400
+        
+        if len(prompts_data) == 0:
+            return jsonify({'message': 'No prompts found in file'}), 400
+        
+        # Import prompts
+        stats = PromptService.bulk_import_prompts(prompts_data)
+        
+        # Prepare response
+        response = {
+            'message': 'Bulk import completed',
+            'statistics': stats
+        }
+        
+        # Determine response status based on results
+        if stats['errors']:
+            response['message'] = 'Bulk import completed with errors'
+            return jsonify(response), 207  # Multi-status
+        else:
+            return jsonify(response), 200
+            
+    except ValueError as e:
+        return jsonify({'message': str(e)}), 400
+    except Exception as e:
+        return jsonify({'message': f'Error during bulk import: {str(e)}'}), 500
+
+
+@session_bp.route('/tags/public', methods=['GET'])
+def get_public_tags():
+    """Get all public tags for use in prompt filters"""
+    try:
+        public_tags = Tag.query.filter_by(public=True).order_by(Tag.tag).all()
+        
+        tags_list = [
+            {
+                'value': tag.tag,
+                'label': tag.tag.replace('-', ' ').replace('_', ' ').title()  # Convert 'technical_programming' to 'Technical Programming'
+            }
+            for tag in public_tags
+        ]
+        
+        return jsonify({
+            'tags': tags_list,
+            'count': len(tags_list)
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'message': f'Error fetching public tags: {str(e)}'}), 500

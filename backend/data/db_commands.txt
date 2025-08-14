@@ -1,0 +1,5 @@
+To make a tag public:
+  UPDATE tag SET public = true WHERE tag = 'creative';
+
+  To hide a tag from users:
+  UPDATE tag SET public = false WHERE tag = 'internal-testing';

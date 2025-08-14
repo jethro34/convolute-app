@@ -10,7 +10,7 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [selectedPromptFilter, setSelectedPromptFilter] = useState('general');
+  const [selectedPromptFilter, setSelectedPromptFilter] = useState('');
   const [sessionStatus, setSessionStatus] = useState('inactive');
   const [timeRemaining, setTimeRemaining] = useState(60); // Default to 1 minute (pairingDuration)
   const [timerRunning, setTimerRunning] = useState(false);
@@ -21,6 +21,7 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
   const processedStudents = useRef(new Set());
   const [pairings, setPairings] = useState([]);
   const [currentPairingObjects, setCurrentPairingObjects] = useState([]);
+  const [availableTags, setAvailableTags] = useState([]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -49,6 +50,7 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
     if (keyword && !socket) {
       fetchStudents();
       setupWebSocket();
+      fetchAvailableTags();
     }
     return () => {
       if (socket && socket.cleanup) {
@@ -156,6 +158,35 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
       }
     } catch (error) {
       console.error('Error fetching students:', error);
+    }
+  };
+
+  const fetchAvailableTags = async () => {
+    try {
+      console.log('[DEBUG] fetchAvailableTags called');
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/session/tags/public`);
+      const data = await res.json();
+      if (res.ok) {
+        console.log('[DEBUG] fetched tags:', data.tags);
+        setAvailableTags(data.tags);
+        // Set first tag as default if no selection exists and tags are available
+        if (data.tags.length > 0 && selectedPromptFilter === '') {
+          setSelectedPromptFilter(data.tags[0].value);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching available tags:', error);
+      // Fallback to hardcoded options if API fails
+      const fallbackTags = [
+        { value: 'general', label: 'General Discussion' },
+        { value: 'technical', label: 'Technical Topics' },
+        { value: 'personal', label: 'Personal Development' },
+        { value: 'academic', label: 'Academic Focus' }
+      ];
+      setAvailableTags(fallbackTags);
+      if (selectedPromptFilter === '') {
+        setSelectedPromptFilter('general');
+      }
     }
   };
 
@@ -281,12 +312,6 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
     }
   };
 
-  const promptFilters = [
-    { value: 'general', label: 'General Discussion' },
-    { value: 'technical', label: 'Technical Topics' },
-    { value: 'personal', label: 'Personal Development' },
-    { value: 'academic', label: 'Academic Focus' }
-  ];
 
   const handleStatusChange = async () => {
     if (sessionStatus === 'inactive') {
@@ -485,9 +510,12 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
                 value={selectedPromptFilter}
                 onChange={(e) => setSelectedPromptFilter(e.target.value)}
               >
-                {promptFilters.map(filter => (
-                  <option key={filter.value} value={filter.value}>
-                    {filter.label}
+                {selectedPromptFilter === '' && (
+                  <option value="">Loading tags...</option>
+                )}
+                {availableTags.map(tag => (
+                  <option key={tag.value} value={tag.value}>
+                    {tag.label}
                   </option>
                 ))}
               </select>
