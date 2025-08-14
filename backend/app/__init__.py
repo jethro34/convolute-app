@@ -35,8 +35,44 @@ def create_app():
     from .socket_events.events import register_socket_events
     register_socket_events(socketio)
 
-    # Create tables
+    # Create tables and initialize data
     with app.app_context():
         db.create_all()
+        
+        # Auto-initialize database with data files on first run
+        from .services.keyword_service import KeywordService
+        from .services.prompt_service import PromptService
+        from .models import Keyword, Prompt
+        import json
+        import glob
+        
+        # Only populate if empty (first run)
+        if Keyword.query.count() == 0:
+            print("Initializing keywords...")
+            KeywordService.populate_keywords()
+        
+        if Prompt.query.count() == 0:
+            print("Loading prompts from data files...")
+            
+            # Get all JSON files in the data directory
+            data_dir = os.path.join(os.path.dirname(__file__), '..', 'data')
+            json_files = glob.glob(os.path.join(data_dir, '*.json'))
+            
+            total_imported = 0
+            for json_file in json_files:
+                try:
+                    print(f"Loading {os.path.basename(json_file)}...")
+                    with open(json_file, 'r', encoding='utf-8') as f:
+                        prompts_data = json.load(f)
+                    
+                    # Import prompts from this file
+                    stats = PromptService.bulk_import_prompts(prompts_data)
+                    total_imported += stats['imported']
+                    print(f"  Imported {stats['imported']} prompts from {os.path.basename(json_file)}")
+                    
+                except Exception as e:
+                    print(f"  Error loading {json_file}: {str(e)}")
+            
+            print(f"Total prompts imported: {total_imported}")
 
     return app
