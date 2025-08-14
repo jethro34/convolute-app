@@ -504,7 +504,7 @@ export default function Dashboard({ keyword, onLogout, userEmail }) {
             </div>
             
             <div className={styles.filterGroup}>
-              <label className={styles.filterLabel}>Prompt Filter</label>
+              <label className={styles.filterLabel}>Select the Topic to Talk About</label>
               <select 
                 className={styles.filterSelect}
                 value={selectedPromptFilter}
